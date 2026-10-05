@@ -1,0 +1,31 @@
+html,
+body {
+    margin: 0;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+}
+
+#screen {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Mantém a proporção 1366x768 da room ocupando o máximo da janela */
+#game {
+    width: min(100vw, calc(100vh * 1366 / 768));
+    height: min(100vh, calc(100vw * 768 / 1366));
+    image-rendering: pixelated;
+    outline: none;
+    cursor: default;
+}
+
+#loading {
+    position: absolute;
+    color: #c0c0c0;
+    font: 16px monospace;
+}
