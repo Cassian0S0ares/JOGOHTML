@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
+<coverage lines-valid="3" lines-covered="3" line-rate="1" branches-valid="1" branches-covered="1" branch-rate="1" timestamp="1791238243349" complexity="0" version="0.1">
+  <sources>
+    <source>/home/cranio/JOGOHTML</source>
+  </sources>
+  <packages>
+    <package name="main" line-rate="1" branch-rate="1">
+      <classes>
+        <class name="carregar.js" filename="tests/helpers/carregar.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="carregar" hits="17" signature="()V">
+              <lines>
+                <line number="6" hits="17"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="8" hits="17" branch="false"/>
+            <line number="9" hits="17" branch="false"/>
+            <line number="10" hits="17" branch="false"/>
+          </lines>
+        </class>
+      </classes>
+    </package>
+  </packages>
+</coverage>

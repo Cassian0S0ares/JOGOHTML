@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="36" failures="0" errors="0" time="0.023248094">
+    <testsuite name="tests/integration/conteudo.test.js" timestamp="2026-10-05T22:10:43.338Z" hostname="cranio-MCR-A520M-DXV3" tests="20" failures="0" errors="0" skipped="0" time="0.008448232">
+        <testcase classname="tests/integration/conteudo.test.js" name="sprites &gt; spr_senatir_up tem imagem e metadados válidos" time="0.00183203">
+        </testcase>
+        <testcase classname="tests/integration/conteudo.test.js" name="sprites &gt; spr_senatir_down tem imagem e metadados válidos" time="0.000194641">
+        </testcase>
+        <testcase classname="tests/integration/conteudo.test.js" name="sprites &gt; spr_senatir_left tem imagem e metadados válidos" time="0.000153182">
+        </testcase>
+        <testcase classname="tests/integration/conteudo.test.js" name="sprites &gt; spr_senatir_right tem imagem e metadados válidos" time="0.000143604">
+        </testcase>
+        <testcase classname="tests/integration/conteudo.test.js" name="sprites &gt; spr_virus_up tem imagem e metadados válidos" time="0.000172469">
+        </testcase>
+        <testcase classname="tests/integration/conteudo.test.js" name="sprites &gt; spr_virus_down tem imagem e metadados válidos" time="0.000158642">
+        </testcase>
+        <testcase classname="tests/integration/conteudo.test.js" name="sprites &gt; spr_virus_left tem imagem e metadados válidos" time="0.000137192">
+        </testcase>
+        <testcase classname="tests/integration/conteudo.test.js" name="sprites &gt; spr_virus_right tem imagem e metadados válidos" time="0.000139135">
+        </testcase>
+        <testcase classname="tests/integration/conteudo.test.js" name="sprites &gt; spr_prop tem imagem e metadados válidos" time="0.000137141">
+        </testcase>
+        <testcase classname="tests/integration/conteudo.test.js" name="sprites &gt; spr_tree tem imagem e metadados válidos" time="0.000138443">
+        </testcase>
+        <testcase classname="tests/integration/conteudo.test.js" name="sprites &gt; spr_bush tem imagem e metadados válidos" time="0.000154775">
+        </testcase>
+        <testcase classname="tests/integration/conteudo.test.js" name="sprites &gt; spr_grass_tuft tem imagem e metadados válidos" time="0.000265185">
+        </testcase>
+        <testcase classname="tests/integration/conteudo.test.js" name="sprites &gt; spr_antivirus_combat_axe tem imagem e metadados válidos" time="0.000178921">
+        </testcase>
+        <testcase classname="tests/integration/conteudo.test.js" name="sprites &gt; spr_combat_bg tem imagem e metadados válidos" time="0.000172558">
+        </testcase>
+        <testcase classname="tests/integration/conteudo.test.js" name="sprites &gt; spr_font_ui tem imagem e metadados válidos" time="0.000245047">
+        </testcase>
+        <testcase classname="tests/integration/conteudo.test.js" name="sprites &gt; spr_senatir_face_01 tem imagem e metadados válidos" time="0.000250217">
+        </testcase>
+        <testcase classname="tests/integration/conteudo.test.js" name="sprites &gt; spr_ts_dungeon tem imagem e metadados válidos" time="0.000175835">
+        </testcase>
+        <testcase classname="tests/integration/conteudo.test.js" name="sala &gt; camadas de tiles têm w × h células" time="0.000975488">
+        </testcase>
+        <testcase classname="tests/integration/conteudo.test.js" name="sala &gt; tem exatamente um jogador e objetos conhecidos" time="0.000667662">
+        </testcase>
+        <testcase classname="tests/integration/conteudo.test.js" name="sala &gt; todas as instâncias estão dentro da sala" time="0.00054581">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/dnd.test.js" timestamp="2026-10-05T22:10:43.343Z" hostname="cranio-MCR-A520M-DXV3" tests="16" failures="0" errors="0" skipped="0" time="0.014799862">
+        <testcase classname="tests/unit/dnd.test.js" name="ability_modifier &gt; valor 10 -&gt; 0" time="0.002401514">
+        </testcase>
+        <testcase classname="tests/unit/dnd.test.js" name="ability_modifier &gt; valor 11 -&gt; 0" time="0.000523938">
+        </testcase>
+        <testcase classname="tests/unit/dnd.test.js" name="ability_modifier &gt; valor 12 -&gt; 1" time="0.000520862">
+        </testcase>
+        <testcase classname="tests/unit/dnd.test.js" name="ability_modifier &gt; valor 18 -&gt; 4" time="0.000514941">
+        </testcase>
+        <testcase classname="tests/unit/dnd.test.js" name="ability_modifier &gt; valor 20 -&gt; 5" time="0.000502597">
+        </testcase>
+        <testcase classname="tests/unit/dnd.test.js" name="ability_modifier &gt; valor 9 -&gt; -1" time="0.000459225">
+        </testcase>
+        <testcase classname="tests/unit/dnd.test.js" name="ability_modifier &gt; valor 8 -&gt; -1" time="0.000479684">
+        </testcase>
+        <testcase classname="tests/unit/dnd.test.js" name="ability_modifier &gt; valor 1 -&gt; -5" time="0.000557693">
+        </testcase>
+        <testcase classname="tests/unit/dnd.test.js" name="format_modifier &gt; mostra sinal de + no zero e nos positivos" time="0.000662161">
+        </testcase>
+        <testcase classname="tests/unit/dnd.test.js" name="format_modifier &gt; mantém o sinal de - nos negativos" time="0.000613568">
+        </testcase>
+        <testcase classname="tests/unit/dnd.test.js" name="roll_dice &gt; soma os dados e descreve a rolagem" time="0.001358618">
+        </testcase>
+        <testcase classname="tests/unit/dnd.test.js" name="roll_d20 &gt; rolagem normal usa um dado só" time="0.001050311">
+        </testcase>
+        <testcase classname="tests/unit/dnd.test.js" name="roll_d20 &gt; vantagem fica com o maior" time="0.000765388">
+        </testcase>
+        <testcase classname="tests/unit/dnd.test.js" name="roll_d20 &gt; desvantagem fica com o menor" time="0.000528898">
+        </testcase>
+        <testcase classname="tests/unit/dnd.test.js" name="roll_d20 &gt; vantagem e desvantagem juntas se anulam" time="0.001117378">
+        </testcase>
+        <testcase classname="tests/unit/dnd.test.js" name="roll_mode_text &gt; explica cada modo" time="0.0009873">
+        </testcase>
+    </testsuite>
+</testsuites>
