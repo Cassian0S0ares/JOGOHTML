@@ -1,0 +1,200 @@
+name: esteira-jogo
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*.*.*']
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: esteira-${{ github.ref }}
+  cancel-in-progress: false               # nunca interromper um deploy no meio
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: read                 # gitleaks lista os commits do PR
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0                  # gitleaks precisa do histórico
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Versão da tag bate com o package.json
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          esperado="${GITHUB_REF_NAME#v}"
+          atual=$(node -p "require('./package.json').version")
+          [ "$atual" = "$esperado" ] || { echo "::error::tag $GITHUB_REF_NAME, mas package.json está em $atual"; exit 1; }
+
+      - run: npm run lint
+
+      - name: Testes de unidade e integração (JUnit + cobertura)
+        run: npm run test:ci
+
+      - name: Segredos (gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Dependências e SBOM
+        run: |
+          mkdir -p reports
+          npm audit --omit=dev --audit-level=critical | tee reports/npm-audit.txt
+          npm sbom --sbom-format cyclonedx > reports/sbom.json
+
+      - name: Navegador do Playwright e poppler (pdfinfo)
+        run: |
+          npx playwright install --with-deps chromium
+          sudo apt-get install -y -qq poppler-utils
+
+      - name: Build versionado e GDD.pdf
+        run: |
+          npm run build
+          npm run gdd:pdf
+          pdfinfo docs/GDD.pdf
+          cat dist/version.json
+
+      - name: E2E contra o build local
+        run: npx playwright test
+
+      - name: Empacotar build.zip + SHA-256
+        run: |
+          (cd dist && zip -qrX ../build.zip .)
+          sha256sum build.zip > build.zip.sha256
+          cat build.zip.sha256
+          tamanho=$(stat -c %s build.zip)
+          echo "build.zip: $((tamanho / 1024)) KiB"
+          [ "$tamanho" -lt $((25 * 1024 * 1024)) ] || { echo "::error::build.zip acima de 25 MB"; exit 1; }
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: build-${{ github.sha }}
+          path: |
+            build.zip
+            build.zip.sha256
+            docs/GDD.pdf
+            reports/
+
+  deploy-hml:
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write                     # escrever no branch gh-pages
+    environment:
+      name: homologacao
+      url: ${{ vars.SITE_URL }}/hml/
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-${{ github.sha }}
+
+      - name: Publicar em gh-pages/hml/
+        run: ./scripts/publicar.sh hml build.zip
+
+      - name: Esperar o Pages servir este commit
+        run: ./scripts/esperar-url.sh "${{ vars.SITE_URL }}/hml/" "${GITHUB_SHA::7}"
+
+      - name: Regressão E2E em homologação
+        run: |
+          npm ci && npx playwright install --with-deps chromium
+          BASE_URL="${{ vars.SITE_URL }}/hml/" EXPECTED_SHA="${GITHUB_SHA::7}" npx playwright test
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-hml-${{ github.sha }}
+          path: reports/
+
+  deploy-prd:
+    needs: deploy-hml
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    environment:
+      name: producao                      # revisor obrigatório no environment = gate de aprovação
+      url: ${{ vars.SITE_URL }}/
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-${{ github.sha }}   # o mesmo artefato que passou em homologação
+
+      - name: Conferir o checksum do artefato
+        run: sha256sum -c build.zip.sha256
+
+      - name: Publicar em gh-pages/releases/<sha>/
+        run: ./scripts/publicar.sh release build.zip "${GITHUB_SHA::7}"
+
+      - name: Abrir canário (10%)
+        run: ./scripts/rollout.sh canario "${GITHUB_SHA::7}" 10
+
+      - name: Smoke na release com rollback automático
+        run: |
+          npm ci && npx playwright install --with-deps chromium
+          url="${{ vars.SITE_URL }}/releases/${GITHUB_SHA::7}/"
+          if ! { ./scripts/esperar-url.sh "$url" "${GITHUB_SHA::7}" && \
+                 BASE_URL="$url" EXPECTED_SHA="${GITHUB_SHA::7}" npx playwright test tests/e2e/smoke.spec.js; }; then
+            ./scripts/rollout.sh rollback "smoke da release ${GITHUB_SHA::7} falhou"
+            exit 1
+          fi
+
+      - name: Observação do canário
+        run: sleep "${{ vars.OBSERVACAO_SEGUNDOS || 120 }}"
+
+      - name: Promover a 100% e conferir a URL pública
+        run: |
+          ./scripts/rollout.sh promover
+          for i in $(seq 40); do
+            servido=$(curl -fsS "${{ vars.SITE_URL }}/rollout.json?t=$(date +%s)" | jq -r .estavel || true)
+            [ "$servido" = "${GITHUB_SHA::7}" ] && break
+            echo "aguardando rollout.json ($i/40): $servido"; sleep 15
+          done
+          if ! BASE_URL="${{ vars.SITE_URL }}/" EXPECTED_SHA="${GITHUB_SHA::7}" npx playwright test tests/e2e/smoke.spec.js; then
+            ./scripts/rollout.sh rollback "smoke de produção ${GITHUB_SHA::7} falhou após a promoção"
+            exit 1
+          fi
+
+  release:
+    needs: ci
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write                     # criar a GitHub Release
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-${{ github.sha }}
+      - name: GitHub Release com build.zip, checksum, SBOM e GDD.pdf
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cp reports/sbom.json sbom.cyclonedx.json
+          gh release create "$GITHUB_REF_NAME" build.zip build.zip.sha256 sbom.cyclonedx.json docs/GDD.pdf \
+            --title "Projeto Tuba $GITHUB_REF_NAME" --generate-notes --verify-tag
