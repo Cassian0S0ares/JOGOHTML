@@ -29,3 +29,13 @@ body {
     color: #c0c0c0;
     font: 16px monospace;
 }
+
+/* Versão do build, discreta no canto da tela */
+#versao {
+    position: absolute;
+    right: 8px;
+    bottom: 6px;
+    color: rgba(192, 192, 192, 0.5);
+    font: 11px monospace;
+    pointer-events: none;
+}

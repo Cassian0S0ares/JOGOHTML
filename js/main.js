@@ -124,6 +124,8 @@ function frame(time)
     requestAnimationFrame(frame);
 }
 
+document.getElementById('versao').textContent = 'v' + GAME_VERSION.versao + ' · ' + GAME_VERSION.sha;
+
 load_sprites()
     .then(() =>
     {

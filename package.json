@@ -1,0 +1,26 @@
+{
+  "name": "projeto-tuba",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Projeto Tuba: protótipo de jogo educativo entregue por uma esteira CI/CD (Desafio Arcade, DevOps 2º ADS)",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:ci": "vitest run --coverage --reporter=default --reporter=junit --outputFile.junit=reports/junit.xml",
+    "test:e2e": "playwright test",
+    "build": "node scripts/build.mjs",
+    "gdd:pdf": "node scripts/gdd-pdf.mjs",
+    "serve": "npx --yes serve dist"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.63.0",
+    "@vitest/coverage-v8": "^4.1.11",
+    "eslint": "^10.12.0",
+    "globals": "^17.13.0",
+    "marked": "^18.1.0",
+    "vitest": "^4.1.11"
+  }
+}
