@@ -5,7 +5,7 @@
 
 | Nome | RA | Papel | GitHub |
 |------|----|-------|--------|
-| TODO | TODO | Produto e Game Design | @TODO |
-| TODO | TODO | Desenvolvimento e Qualidade | @TODO |
-| TODO | TODO | Plataforma e Release | @TODO |
-| TODO | TODO | SRE e Segurança | @TODO |
+| Guilherme Emanuel Gonçalves | TODO | Produto e Game Design | @TODO |
+| Cassiano Luiz Brandes Soares | TODO | Desenvolvimento e Qualidade | @Cassian0S0ares |
+| João Vitor Charleaux | TODO | Plataforma e Release | @TODO |
+| Davi Ferreira da Cunha | TODO | SRE e Segurança | @TODO |
