@@ -1,0 +1,27 @@
+name: rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      motivo:
+        description: Por que o rollback está sendo feito
+        required: true
+
+permissions:
+  contents: write                         # escrever rollout.json no gh-pages
+
+concurrency:
+  group: rollout
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Voltar estável para anterior (ou retirar o canário)
+        env:
+          MOTIVO: ${{ inputs.motivo }}      # via env, para o texto digitado não virar comando
+        run: ./scripts/rollout.sh rollback "$MOTIVO"
+      - name: Resumo
+        run: ./scripts/rollout.sh status >> "$GITHUB_STEP_SUMMARY"

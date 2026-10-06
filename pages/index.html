@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Projeto Tuba</title>
+    <style>body { margin: 0; background: #000; color: #c0c0c0; font: 16px monospace; display: grid; place-items: center; height: 100vh; }</style>
+</head>
+<body>
+    <p id="msg">Carregando...</p>
+    <!-- Carregador de produção: lê o rollout.json e manda o jogador para a release certa.
+         Quem caiu numa versão continua nela enquanto ela estiver em produção (estável ou canário). -->
+    <script>
+        fetch('rollout.json', { cache: 'no-store' })
+            .then((r) => r.json())
+            .then((r) =>
+            {
+                let v = null;
+                try { v = localStorage.getItem('versao'); } catch (e) { /* navegador sem storage */ }
+                const validas = [r.estavel, r.canario].filter(Boolean);
+                if (!validas.includes(v))
+                {
+                    v = (r.canario && Math.random() * 100 < r.percentual) ? r.canario : r.estavel;
+                    try { localStorage.setItem('versao', v); } catch (e) { /* idem */ }
+                }
+                if (!v) throw new Error('sem release estável');
+                location.replace('releases/' + v + '/');
+            })
+            .catch(() => { document.getElementById('msg').textContent = 'Jogo indisponível no momento.'; });
+    </script>
+</body>
+</html>
