@@ -12,6 +12,7 @@
     "test:e2e": "playwright test",
     "build": "node scripts/build.mjs",
     "gdd:pdf": "node scripts/gdd-pdf.mjs",
+    "relatorio:pdf": "node scripts/gdd-pdf.mjs docs/relatorio.md docs/Relatorio.pdf \"Relatório técnico\"",
     "serve": "npx --yes serve dist"
   },
   "devDependencies": {
