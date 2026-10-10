@@ -6,14 +6,17 @@ Todo ativo que não foi criado pelo squad precisa estar aqui, com autor, link e 
 
 | Arquivo | Tipo | Autor | Link | Licença |
 |---------|------|-------|------|---------|
-| `sprites/spr_senatir_*.png`, `spr_senatir_face_01.png` | Sprite | TODO | TODO | TODO |
-| `sprites/spr_virus_*.png` | Sprite | TODO | TODO | TODO |
-| `sprites/spr_antivirus_combat_axe.png` | Sprite | TODO | TODO | TODO |
-| `sprites/spr_ts_dungeon.png` | Tileset | TODO | TODO | TODO |
+| `sprites/spr_senatir_*.png`, `spr_senatir_face_01.png`, `spr_antivirus_*.png` | Sprite | TODO | TODO | TODO |
+| `sprites/spr_virus_*.png`, `spr_virus_elite_*.png`, `spr_virus_face.png` | Sprite | TODO | TODO | TODO |
+| `sprites/spr_firewall_*.png` | Sprite | TODO | TODO | TODO |
+| `sprites/spr_cavalo_troia_*.png` | Sprite | TODO | TODO | TODO |
+| `sprites/spr_ddos.png`, `spr_ddos_face.png`, `spr_portal.png` | Sprite | TODO | TODO | TODO |
+| `sprites/spr_fogueira.png`, `spr_computer.png` | Sprite | TODO | TODO | TODO |
+| `sprites/spr_ts_dungeon.png`, `spr_ts_lab.png` | Tileset | TODO | TODO | TODO |
 | `sprites/spr_tree.png`, `spr_bush.png`, `spr_grass_tuft.png`, `spr_prop.png` | Sprite | TODO | TODO | TODO |
 | `sprites/spr_combat_bg.png` | Fundo | TODO | TODO | TODO |
 | `sprites/spr_font_ui.png` | Fonte bitmap | TODO | TODO | TODO |
-| `sounds/snd_overworld_music.ogg`, `snd_combat_music.ogg` | Música | TODO | TODO | TODO |
+| `sounds/snd_overworld_music.ogg`, `snd_combat_music.ogg`, `snd_boss_music.ogg` | Música | TODO | TODO | TODO |
 | `sounds/snd_dice_roll.ogg` | Efeito | TODO | TODO | TODO |
 
 ## Regras do jogo

@@ -14,13 +14,13 @@ titulo: "Projeto Tuba · Game Design Document"
 
 **Problema.** Conceitos de segurança da informação (vírus, malware, antivírus, boas práticas de defesa) costumam chegar a quem está começando em tecnologia como teoria seca, longe da prática. Ao mesmo tempo, o raciocínio de probabilidade, essencial em programação e em análise de risco, é visto como "matemática difícil".
 
-**Proposta.** *Projeto Tuba* é um RPG de exploração e combate por turnos em que o jogador controla o **Antivírus**, um herói que percorre os setores de um sistema infectado e enfrenta vírus. Cada decisão de combate (atacar, entrar em Fúria, se esquivar, arriscar um Ataque Imprudente) é uma escolha de risco calculado, resolvida com dados visíveis na tela, como em D&D 5e.
+**Proposta.** *Projeto Tuba* é um RPG de exploração e combate por turnos em que o jogador controla o **Antivírus**, um herói que percorre os setores de um sistema infectado, protege os computadores com minijogos de segurança e enfrenta vírus, um DDoS e um Cavalo de Troia. Cada decisão de combate (atacar, entrar em Fúria, se esquivar, arriscar um Ataque Imprudente) é uma escolha de risco calculado, resolvida com dados visíveis na tela, como em D&D 5e.
 
 **Público-alvo.** Estudantes do ensino médio e técnico e iniciantes em cursos de tecnologia (15 a 25 anos), sem pré-requisito de programação.
 
 **O que o jogador aprende.**
 
-- Noções de segurança digital: o que é um vírus, como ele se espalha pelo sistema e por que agir cedo reduz o dano.
+- Noções de segurança digital: senhas e 2FA, phishing, atualizações, regras de firewall, DDoS e Cavalo de Troia, cada uma num minijogo ou numa luta.
 - Probabilidade aplicada: chance de acerto contra uma Classe de Armadura, vantagem/desvantagem (melhor ou pior de dois d20) e valor esperado de dano.
 - Gestão de recursos: Fúrias, pontos de vida e exaustão como "orçamento" de defesa.
 
@@ -32,37 +32,50 @@ titulo: "Projeto Tuba · Game Design Document"
 
 ## 3. Mecânicas-core
 
-**Loop principal.** Explorar a sala → encontrar um vírus (ele persegue o jogador quando o vê) → combate por turnos → recompensa ou derrota → descansar e seguir explorando.
+**Loop principal.** Explorar a sala → proteger os computadores (minijogos de segurança) → enfrentar os vírus que perseguem o jogador → o chefe da sala desperta → vencê-lo e seguir para o próximo mundo. Cada inimigo derrotado dá uma "aulinha" sobre o tema da sala antes de sumir.
 
-**Exploração.** WASD/Setas para andar, **E** para interagir com placas e objetos, **R** para descanso longo (recupera PV e Fúrias, mas só sem inimigo por perto).
+**Exploração.** WASD/Setas para andar, **E** para interagir com placas, computadores, o portal e o Firewall, **R** para descanso longo (5 s na fogueira: recupera PV, Fúrias e as magias do Firewall, mas só sem inimigo perseguindo). A tecla **7** liga o modo paz (só para testes: inimigos comuns param de perseguir; chefes não).
 
 **Combate por turnos.**
 
-- Iniciativa por d20 decide quem age primeiro.
+- Iniciativa por d20 decide a ordem (antivírus, inimigo e, quando ele está no time, o Firewall).
 - Ataque: d20 + bônus contra a CA do inimigo; 20 natural é crítico (dados de dano dobrados).
-- **Fúria:** bônus de dano e resistência; termina se o jogador não atacar nem sofrer dano no turno.
+- **Fúria:** bônus de dano e resistência; termina se o jogador não atacar nem sofrer dano no turno. **Fúria Frenética** dá um ataque extra com a Ação Bônus, ao custo de 1 nível de exaustão.
 - **Ataque Imprudente:** vantagem nos ataques, mas os inimigos também ganham vantagem.
 - **Esquiva:** inimigos atacam com desvantagem.
-- **Timing:** acertar o momento certo na barra dá bônus de dano.
-- O vírus tem o *Pseudópode* e o *Cuspe Ácido*, que recarrega com 5+ no d6.
+- **Timing:** acertar o momento certo na barra dá bônus de dano; acertar o anel na defesa reduz o dano recebido.
+- **Firewall (aliado, Mago 3):** Rajada de Fogo, Mãos Flamejantes, Raio Ardente, Poção de Brasa Viva e Esquiva. Antes de cada magia de dano vem o **ritmo das chamas** (4 notas, estilo osu!): 4 acertos dão +2d6 de fogo, 3 dão +1d4.
+- Os inimigos têm ataque básico (Pseudópode, Garra Cristalina, Investida) e uma habilidade especial com recarga 5-6 no d6 (Cuspe Ácido, Cuspe Corrosivo, Chuva de Lascas).
 
-**Vitória e derrota.** Cada vírus derrotado é removido da sala; a fase é vencida com a sala limpa (a tela de fim de fase entra na v1.0.0). O jogador perde quando os PV chegam a zero, e a sala reinicia.
+**Minijogos dos computadores.**
 
-**Progressão (planejada para v1.0.0).** Setores com vírus mais resistentes; entre setores, uma tela de "relatório de incidente" explica o conceito de segurança da fase e mostra a probabilidade real das jogadas feitas.
+| Sala | Minijogo | Conceito ensinado |
+|------|----------|-------------------|
+| Mundo 1 (4 computadores) | Quiz de 5 perguntas por sala: senhas e 2FA, phishing e engenharia social, malware e atualizações, redes e privacidade | Boas práticas de segurança do dia a dia |
+| Mundo 2 · Caixa de Entrada | Marcar as partes suspeitas de 7 e-mails e decidir Confiar ou Quarentena | Identificar phishing (remetente, link, anexo, pressa) |
+| Mundo 2 · Central de Atualizações | Escolher a ordem das atualizações enquanto um worm avança pela rede | Priorizar correções pelo que o ataque alcança primeiro |
+| Mundo 2 · Regras do Firewall | Permitir ou bloquear pacotes numa esteira seguindo a lista de regras | A primeira regra que combina decide; negar por padrão; tráfego de saída suspeito |
 
-| Fase | Ameaça | Conceito ensinado |
-|------|--------|-------------------|
-| 1 · Sala inicial | Vírus comum | O que é um vírus; chance de acerto com d20 |
-| 2 · Setor de rede *(planejada)* | Worm (se replica) | Propagação; agir cedo; vantagem/desvantagem |
-| 3 · Núcleo *(planejada)* | Ransomware | Backup e recuperação; gestão de recursos |
+**Progressão.**
+
+| Mundo | Ameaças | Chefe | Conceito |
+|-------|---------|-------|----------|
+| 1 · Masmorra | Vírus comum | **DDoS**: um enxame que se divide em dois a cada turno; o timing do ataque decide quantos golpes e o jogador escolhe o pedaço alvo | Negação de serviço distribuída e botnets |
+| 2 · Data center | Vírus de Elite (multiataque), um por sala, que só acordam quando o Firewall entra no time | **Cavalo de Troia**: o próprio Firewall tira a fantasia, rouba habilidades do antivírus a cada 3 turnos e usa contra ele | Cavalo de Troia, privilégio mínimo, defesa em camadas |
+
+Pistas da traição ficam escondidas nas falas dos Vírus de Elite (os bytes 0x54 0x52 0x4F 0x49 0x41 formam "TROIA" em ASCII).
+
+**Vitória e derrota.** O chefe do mundo 1 abre um portal para o mundo 2; vencer o Cavalo de Troia termina a história. Se os PV do antivírus chegam a zero, a sala reinicia (o portal e os computadores do mundo 2 continuam como estavam).
 
 ## 4. Telas
 
 ![Sala inicial: HUD com PV, CA, Fúrias e exaustão; vírus nas salas laterais; versão no canto inferior direito](img/tela-sala.png)
 
 - **Menu:** *a definir (wireframe no Stitch).*
-- **HUD:** nome e classe, barra de PV, CA, Fúrias, exaustão e controles (canto superior esquerdo); versão do build (canto inferior direito).
-- **Combate:** cenário, log de rolagens, dados animados e menu de ações.
+- **HUD:** nome e classe, barra de PV, CA, Fúrias, exaustão, a linha do Firewall quando ele está no time e os controles (canto superior esquerdo); versão do build (canto inferior direito).
+- **Falas:** caixa com retrato, máquina de escrever e escolhas (conversa com o Firewall).
+- **Terminal de segurança:** tela de cada minijogo de computador, com placar e explicação de cada resposta.
+- **Combate:** cenário, log de rolagens, dados animados, ficha de quem está agindo e menu de ações.
 - **Fim de jogo:** mensagem de derrota e reinício da sala.
 
 ## 5. Referências

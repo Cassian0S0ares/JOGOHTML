@@ -20,7 +20,7 @@ Como jogar offline:
   2. Abra o arquivo index.html no navegador (Chrome, Firefox ou Edge).
      Se o navegador bloquear arquivos locais, rode "npx serve" nesta pasta e abra o endereço mostrado.
 
-Controles: WASD/Setas para andar, E para interagir, R para descanso longo.
+Controles: WASD/Setas para andar, E para interagir, R para descanso longo, 7 liga o modo paz (testes).
 `);
 
 console.log(`dist/ gerado: v${versao} (${sha})`);

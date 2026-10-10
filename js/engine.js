@@ -28,6 +28,7 @@ const point_direction = (x1, y1, x2, y2) => (Math.atan2(-(y2 - y1), x2 - x1) * 1
 const angle_difference = (a, b) => ((((a - b) % 360) + 540) % 360) - 180;
 const mod = (a, n) => ((a % n) + n) % n;
 const point_in_rectangle = (px, py, x1, y1, x2, y2) => px >= x1 && px <= x2 && py >= y1 && py <= y2;
+const choose = (...options) => options[Math.floor(Math.random() * options.length)];
 
 // ---------------------------------------------------------------- Cores (0xRRGGBB)
 
@@ -41,6 +42,7 @@ const c_orange = 0xFFA040;
 const c_ltgray = 0xC0C0C0;
 const c_gray = 0x808080;
 const c_dkgray = 0x404040;
+const c_fuchsia = 0xFF00FF;
 
 const make_colour_rgb = (r, g, b) => (r << 16) | (g << 8) | b;
 const colour_r = (c) => (c >> 16) & 255;
@@ -212,6 +214,9 @@ function load_sprites()
 const sprite_get_width = (s) => sprites[s].w;
 const sprite_get_height = (s) => sprites[s].h;
 const sprite_get_number = (s) => sprites[s].n;
+const sprite_get_xoffset = (s) => sprites[s].xo;
+const sprite_get_yoffset = (s) => sprites[s].yo;
+const sprite_get_speed = (s) => sprites[s].speed;
 
 /// Origem do quadro dentro da folha (ou de uma cópia tingida da folha)
 function sprite_source(s, frame, colour)
@@ -240,7 +245,10 @@ function sprite_source(s, frame, colour)
         }
     }
 
-    return { img, sx: (f % spr.cols) * spr.w, sy: Math.floor(f / spr.cols) * spr.h, spr };
+    // tw/th: tamanho do quadro na folha (sprites grandes saem reduzidos; o tamanho lógico continua w/h)
+    const tw = spr.tw ?? spr.w;
+    const th = spr.th ?? spr.h;
+    return { img, sx: (f % spr.cols) * tw, sy: Math.floor(f / spr.cols) * th, tw, th, spr };
 }
 
 function draw_sprite_ext(s, frame, x, y, xscale, yscale, rot, colour, alpha)
@@ -252,15 +260,19 @@ function draw_sprite_ext(s, frame, x, y, xscale, yscale, rot, colour, alpha)
     ctx.translate(x, y);
     if (rot) ctx.rotate(-rot * Math.PI / 180);
     ctx.scale(xscale, yscale);
-    ctx.drawImage(src.img, src.sx, src.sy, spr.w, spr.h, -spr.xo, -spr.yo, spr.w, spr.h);
+    ctx.drawImage(src.img, src.sx, src.sy, src.tw, src.th, -spr.xo, -spr.yo, spr.w, spr.h);
     ctx.restore();
 }
+
+const draw_sprite = (s, frame, x, y) => draw_sprite_ext(s, frame, x, y, 1, 1, 0, c_white, 1);
 
 function draw_sprite_part_ext(s, frame, left, top, w, h, x, y, xscale, yscale, colour, alpha)
 {
     const src = sprite_source(s, frame, colour);
+    const kx = src.tw / src.spr.w;
+    const ky = src.th / src.spr.h;
     ctx.globalAlpha = clamp(alpha, 0, 1);
-    ctx.drawImage(src.img, src.sx + left, src.sy + top, w, h, x, y, w * xscale, h * yscale);
+    ctx.drawImage(src.img, src.sx + left * kx, src.sy + top * ky, w * kx, h * ky, x, y, w * xscale, h * yscale);
 }
 
 // ---------------------------------------------------------------- Fonte bitmap (spr_font_ui)
@@ -344,7 +356,8 @@ const draw_text_ext = (x, y, text, sep, width) => draw_text_lines(x, y, wrap_tex
 
 const vk_up = 'ArrowUp', vk_down = 'ArrowDown', vk_left = 'ArrowLeft', vk_right = 'ArrowRight';
 const vk_enter = 'Enter', vk_space = 'Space', vk_escape = 'Escape';
-const ord = (ch) => 'Key' + ch;
+const vk_numpad7 = 'Numpad7';
+const ord = (ch) => (ch >= '0' && ch <= '9') ? 'Digit' + ch : 'Key' + ch;
 
 const input = {
     down: new Set(),
@@ -403,13 +416,19 @@ function input_begin_step()
 const keyboard_check = (code) => input.down.has(code);
 const keyboard_check_pressed = (code) => input.pressed.has(code);
 const mouse_check_button_pressed = () => input.mouse_pressed;
+const mb_left = 0;
 const device_mouse_x_to_gui = () => input.mouse_x;
 const device_mouse_y_to_gui = () => input.mouse_y;
+
+// ---------------------------------------------------------------- Tempo
+
+const current_time_ms = () => performance.now();
 
 // ---------------------------------------------------------------- Áudio
 
 // Volume do asset no GameMaker (multiplica o ganho de cada audio_play_sound)
-const SOUND_VOLUME = { snd_dice_roll: 1.0 };
+const SOUND_VOLUME = GAME_DATA.sounds;
+const sounds_playing = new Set();
 const sounds_waiting_unlock = new Set();
 
 /// O navegador só deixa tocar som depois de uma interação: o que falhou toca no primeiro clique/tecla
@@ -432,16 +451,25 @@ function audio_play_sound(name, loop, gain = 1, pitch = 1)
         el.preservesPitch = false;
         el.playbackRate = pitch;
     }
-    const snd = { el, paused: false, stopped: false };
+    const snd = { name, el, paused: false, stopped: false };
+    sounds_playing.add(snd);
+    el.addEventListener('ended', () => { snd.stopped = true; sounds_playing.delete(snd); });
     el.play().catch(() => { if (loop) sounds_waiting_unlock.add(snd); });
     return snd;
 }
 
+/// Aceita o som tocando ou o nome do asset (para todos os que estiverem tocando)
 function audio_stop_sound(snd)
 {
     if (!snd) return;
+    if (typeof snd === 'string')
+    {
+        for (const other of [...sounds_playing]) if (other.name === snd) audio_stop_sound(other);
+        return;
+    }
     snd.stopped = true;
     snd.el.pause();
+    sounds_playing.delete(snd);
     sounds_waiting_unlock.delete(snd);
 }
 
@@ -458,3 +486,6 @@ function audio_resume_sound(snd)
 }
 
 const audio_is_paused = (snd) => snd.paused;
+
+/// Como no GameMaker, um som pausado (ou esperando o primeiro clique) ainda conta como tocando
+const audio_is_playing = (snd) => !!snd && !snd.stopped;

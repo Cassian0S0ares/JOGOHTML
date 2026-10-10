@@ -1,4 +1,4 @@
-/* global game */
+/* global game, instance_exists, instance_create, instance_number, Portal */
 import { expect, test } from '@playwright/test';
 
 // Smoke: o jogo abre, carrega os sprites, desenha a sala e mostra a versão.
@@ -40,5 +40,44 @@ test('o jogador anda pela sala', async ({ page }) =>
     const depois = await page.evaluate(() => ({ x: game.player.x, y: game.player.y }));
 
     expect(depois.y).toBeGreaterThan(antes.y);
+    expect(erros).toEqual([]);
+});
+
+test('o computador abre o quiz e o Esc fecha', async ({ page }) =>
+{
+    const erros = [];
+    page.on('pageerror', (e) => erros.push(e.message));
+
+    await page.goto('./');
+    await expect(page.locator('#loading')).toHaveCount(0, { timeout: 15_000 });
+    await page.locator('#game').click();
+
+    // Modo paz para nenhum vírus começar luta no caminho; o antivírus vai para perto do computador de cima à esquerda
+    await page.evaluate(() => { global.peace_mode = true; game.player.x = 240; game.player.y = 200; });
+    await page.keyboard.press('e');
+    await expect.poll(() => page.evaluate(() => instance_exists('obj_quiz'))).toBe(true);
+
+    // O terminal ignora as teclas dos primeiros quadros (a mesma tecla que o abriu)
+    await page.waitForTimeout(200);
+    await page.keyboard.press('Escape');
+    await expect.poll(() => page.evaluate(() => instance_exists('obj_quiz'))).toBe(false);
+    expect(erros).toEqual([]);
+});
+
+test('o portal leva para a Room2 com o Firewall', async ({ page }) =>
+{
+    const erros = [];
+    page.on('pageerror', (e) => erros.push(e.message));
+
+    await page.goto('./');
+    await expect(page.locator('#loading')).toHaveCount(0, { timeout: 15_000 });
+
+    await page.evaluate(() =>
+    {
+        global.boss_ddos_defeated = true;
+        instance_create(Portal, 688, 560).enter();
+    });
+    await expect.poll(() => page.evaluate(() => game.room), { timeout: 5_000 }).toBe('Room2');
+    expect(await page.evaluate(() => [instance_exists('obj_firewall'), instance_number('obj_computer'), instance_number('obj_virus_elite')])).toEqual([true, 3, 5]);
     expect(erros).toEqual([]);
 });

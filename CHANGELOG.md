@@ -2,6 +2,21 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/); versões em [SemVer](https://semver.org/lang/pt-BR/).
 
+## [Não lançado]
+
+### Adicionado
+- Port completo do protótipo GameMaker atual: os dois mundos (masmorra e data center) e a troca de room pelo portal.
+- Computadores com minijogos: quiz por sala no mundo 1; Caixa de Entrada (phishing), Central de Atualizações (worm) e Regras do Firewall no mundo 2.
+- Chefe DDoS, que se divide a cada turno; o timing do ataque decide quantos golpes e o jogador escolhe o pedaço alvo.
+- Firewall: conversa com escolhas, entra no time, segue o antivírus e luta junto (magias de fogo com o minijogo de ritmo).
+- Vírus de Elite (um por sala do mundo 2) e chefe final Cavalo de Troia, que rouba habilidades do antivírus.
+- Aulinhas dos inimigos derrotados, descanso na fogueira, música do chefe e modo paz (tecla 7) para testes.
+- Testes de unidade dos minijogos e E2E do quiz e do portal.
+
+### Alterado
+- `tools/build_assets.py` exporta todos os sprites usados, os sons e as duas rooms; sprites grandes saem reduzidos na folha.
+- O jogo passou a ter um runtime no estilo GameMaker (`js/runtime.js`): objetos com herança, `instance_exists`, rooms e variáveis globais.
+
 ## [0.1.0] - 2026-10-05 · 1ª prévia ("esqueleto andando")
 
 ### Adicionado

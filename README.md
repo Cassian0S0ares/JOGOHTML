@@ -28,7 +28,7 @@ Sem build, abrir o `index.html` da raiz também funciona (a versão aparece como
 | `npm run build` | `dist/` + `dist/version.json` (SemVer, SHA, data) |
 | `npm run gdd:pdf` | `docs/gdd.md` → `docs/GDD.pdf` |
 
-Controles: WASD/Setas para andar, **E** para interagir, **R** para descanso longo.
+Controles: WASD/Setas para andar, **E** para interagir, **R** para descanso longo, **7** liga o modo paz (testes).
 
 ## Estratégia de branching
 
@@ -72,12 +72,14 @@ O jogo não pede nem coleta nenhum dado pessoal. O navegador guarda apenas a ver
 ## Estrutura
 
 ```
-index.html, style.css, js/   jogo (HTML5 Canvas, scripts clássicos portados do GameMaker)
+index.html, style.css, js/   jogo (HTML5 Canvas, scripts clássicos portados do GameMaker):
+                               engine.js e runtime.js imitam o GameMaker; scr_*.js são os scripts;
+                               os demais arquivos são os objetos (jogador, inimigos, Firewall, minijogos, combate)
 assets/                      sprites e sons
 docs/                        GDD e relatório
 pages/index.html             carregador de produção (vai para a raiz do gh-pages)
 scripts/                     build, GDD.pdf, publicação, rollout
 tests/                       unit/, integration/, e2e/
-tools/build_assets.py        exporta sprites e sala do projeto GameMaker
+tools/build_assets.py        exporta sprites, sons e as rooms do projeto GameMaker para assets/ e js/data.js
 .github/workflows/           esteira.yml, rollback.yml
 ```
