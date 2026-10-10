@@ -65,7 +65,7 @@ titulo: "Projeto Tuba · Game Design Document"
 
 Pistas da traição ficam escondidas nas falas dos Vírus de Elite (os bytes 0x54 0x52 0x4F 0x49 0x41 formam "TROIA" em ASCII).
 
-**Vitória e derrota.** Derrotar o chefe de um mundo faz sumir os inimigos que ainda estavam vivos. O chefe do mundo 1 abre um portal para o mundo 2 (chegar num mundo novo vale um descanso longo); vencer o Cavalo de Troia termina a história. Se os PV do antivírus chegam a zero, a sala reinicia (o portal e os computadores do mundo 2 continuam como estavam).
+**Vitória e derrota.** Derrotar o chefe de um mundo faz sumir os inimigos que ainda estavam vivos. O chefe do mundo 1 abre um portal para o mundo 2 (chegar num mundo novo vale um descanso longo); vencer o Cavalo de Troia termina a história. Se os PV do antivírus chegam a zero, aparece a tela de game over e a sala reinicia (o portal e os computadores do mundo 2 continuam como estavam).
 
 ## 4. Telas
 
@@ -76,7 +76,8 @@ Pistas da traição ficam escondidas nas falas dos Vírus de Elite (os bytes 0x5
 - **Falas:** caixa com retrato, máquina de escrever e escolhas (conversa com o Firewall).
 - **Terminal de segurança:** tela de cada minijogo de computador, com placar e explicação de cada resposta.
 - **Combate:** cenário, log de rolagens, dados animados, ficha de quem está agindo e menu de ações.
-- **Fim de jogo:** mensagem de derrota e reinício da sala.
+- **Game over:** "Sistema comprometido", com uma dica de combate; Enter reinicia a sala.
+- **Fim de jogo (zerar):** depois da última aulinha do Cavalo de Troia, "Rede protegida" com a revisão do que o jogador aprendeu em cada ameaça; Enter recomeça do mundo 1.
 
 ## 5. Referências
 

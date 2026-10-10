@@ -457,7 +457,12 @@ class TrojanBoss extends Slime
     {
         super.step();
 
-        if (this.destroyed) return;
+        // Sumiu depois da última aulinha: zerou o jogo
+        if (this.destroyed)
+        {
+            if (this.is_dying) end_screen_open('win');
+            return;
+        }
         if (world_resting()) return;
 
         if (this.is_dying)
