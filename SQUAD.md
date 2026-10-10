@@ -8,4 +8,4 @@
 | Guilherme Emanuel Gonçalves | TODO | Produto e Game Design | @TODO |
 | Cassiano Luiz Brandes Soares | TODO | Desenvolvimento e Qualidade | @Cassian0S0ares |
 | João Vitor Charleaux | TODO | Plataforma e Release | @TODO |
-| Davi Ferreira da Cunha | TODO | SRE e Segurança | @TODO |
+| Davi Ferreira da Cunha | TODO | SRE e Segurança | @daviferreira-dev |
