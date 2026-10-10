@@ -141,13 +141,14 @@ test('vencer o Cavalo de Troia mostra a tela de fim de jogo', async ({ page }) =
     await page.evaluate(() => { global.boss_ddos_defeated = true; room_goto('Room2'); });
     await expect.poll(() => page.evaluate(() => game.room)).toBe('Room2');
 
-    // Cavalo derrotado: a última aulinha abre; pular as falas até a tela de fim
+    // Cavalo derrotado: a última aulinha abre; pular as falas (e as do Firewall antes) até a tela de fim.
+    // Intervalo fixo curto: o padrão do poll cresce até 1 s por Enter e estoura o tempo num runner lento
     await page.evaluate(() => { global.peace_mode = true; instance_create(TrojanBoss, 720, 360).is_dying = true; });
     await expect.poll(async () =>
     {
         await page.keyboard.press('Enter');
         return page.evaluate(() => instance_exists('obj_end_screen'));
-    }, { timeout: 30_000 }).toBe(true);
+    }, { timeout: 25_000, intervals: [100] }).toBe(true);
     expect(await page.evaluate(() => instance_find('obj_end_screen').kind)).toBe('win');
     expect(erros).toEqual([]);
 });
