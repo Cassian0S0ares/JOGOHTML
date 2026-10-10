@@ -18,7 +18,7 @@ jobs:
   rollback:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Voltar estável para anterior (ou retirar o canário)
         env:
           MOTIVO: ${{ inputs.motivo }}      # via env, para o texto digitado não virar comando
