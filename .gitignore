@@ -11,3 +11,8 @@ submissao/
 .env
 *.log
 docs/.gdd.html
+
+# Materiais de terceiros (regulamento e avaliação), não redistribuir
+docs/Avaliação.html
+docs/Modelo GDD Framework Arcade.docx
+docs/Regulamento-Framework-Arcade.pdf
