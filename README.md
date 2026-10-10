@@ -65,6 +65,14 @@ tag vX.Y.Z ──▶ ci ──▶ release (GitHub Release com build.zip, checksu
 - **Settings → Variables → Actions:** `SITE_URL = https://cassian0s0ares.github.io/JOGOHTML` e, opcional, `OBSERVACAO_SEGUNDOS` (padrão 120).
 - **Settings → Branches:** proteção da `main` com PR, 1 aprovação e status check `ci`.
 
+## Monitoramento e métricas DORA
+
+- **`monitor`** (a cada 15 min e à mão): sonda produção e homologação (código HTTP, tempo de resposta e versão servida) e grava em `status/sondas.csv` no branch `observabilidade`, para não publicar o Pages a cada sonda. O branch é criado na primeira execução.
+- **Alertas como Issues** com o label `alerta`: `JogoForaDoAr` (resposta diferente de 200) e `LatenciaAlta` (mais de 2 s). Fecham sozinhos quando a sonda volta ao normal; o tempo entre abrir e fechar é o tempo de recuperação.
+- **DORA:** `scripts/dora.mjs` calcula frequência de deploy, lead time, taxa de falha e tempo de recuperação pela API do GitHub e grava `status/dora.json` (linha de base da Carparts: lead time de 11 dias).
+- **Painel:** <https://cassian0s0ares.github.io/JOGOHTML/status/> (disponibilidade, latência, versão, canário e DORA), publicado pela pipeline a partir de `pages/status/`.
+- Limite conhecido: execuções agendadas do GitHub Actions podem atrasar alguns minutos em horários de pico.
+
 ## Dados pessoais (LGPD)
 
 O jogo não pede nem coleta nenhum dado pessoal. O navegador guarda apenas a versão sorteada pelo canário (`localStorage`, chave `versao`) para manter o jogador na mesma versão durante a sessão.
@@ -77,7 +85,7 @@ index.html, style.css, js/   jogo (HTML5 Canvas, scripts clássicos portados do 
                                os demais arquivos são os objetos (jogador, inimigos, Firewall, minijogos, combate)
 assets/                      sprites e sons
 docs/                        GDD e relatório
-pages/index.html             carregador de produção (vai para a raiz do gh-pages)
+pages/                       carregador de produção (index.html) e painel status/, publicados na raiz do gh-pages
 scripts/                     build, GDD.pdf, publicação, rollout
 tests/                       unit/, integration/, e2e/
 tools/build_assets.py        exporta sprites, sons e as rooms do projeto GameMaker para assets/ e js/data.js
