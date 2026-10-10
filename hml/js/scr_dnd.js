@@ -8,6 +8,7 @@ const CombatState = Object.freeze({
     victory: 'victory',
     defeat: 'defeat',
     fled: 'fled',
+    ally_turn: 'ally_turn',
 });
 
 /// Modificador de atributo: (valor - 10) / 2, arredondado para baixo.

@@ -7,6 +7,7 @@ const DICE_COLOUR_FOE = make_colour_rgb(142, 84, 192);
 const DICE_COLOUR_SLASHING = make_colour_rgb(196, 58, 58);
 const DICE_COLOUR_BLUDGEONING = make_colour_rgb(206, 196, 176);
 const DICE_COLOUR_ACID = make_colour_rgb(96, 176, 70);
+const DICE_COLOUR_FIRE = make_colour_rgb(232, 96, 32);
 const DICE_TEXT_DARK = make_colour_rgb(26, 24, 36);
 
 function dice_event_create(title, accent)
@@ -25,6 +26,7 @@ function dice_event_create(title, accent)
         verdict: '',
         verdict_colour: c_white,
         fast: false,
+        hide_sum: false,    // true: não mostra "= total" (ex.: vários ataques independentes)
     };
 }
 
@@ -64,7 +66,7 @@ function dice_event_prepare(event)
     const has_discarded = (kept !== event.dice.length);
 
     // Só mostra "= total" quando há mais de uma parcela para somar
-    event.show_sum = (kept + modifier_count) > 1;
+    event.show_sum = !event.hide_sum && (kept + modifier_count) > 1;
     event.chips_start = event.spin_end + (has_discarded ? 18 : 10);
     event.total_at = event.show_sum ? event.chips_start + (modifier_count + 1) * 9 : event.chips_start;
     event.verdict_at = event.total_at + (event.show_sum ? 10 : 0);

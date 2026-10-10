@@ -80,6 +80,17 @@ function timing_event_update(event, pressed)
 /// [título, detalhe, cor] do resultado.
 function timing_result_text(event)
 {
+    if (event.kind === 'attack' && event.data.multi === true)
+    {
+        // Contra o chefe o timing decide quantos golpes
+        switch (event.result)
+        {
+            case TimingResult.perfect: return ['PERFEITO!', '3 golpes', c_yellow];
+            case TimingResult.good:    return ['BOM!', '2 golpes', c_lime];
+            default:                   return ['FORA DO TEMPO', '1 golpe', c_ltgray];
+        }
+    }
+
     if (event.kind === 'attack')
     {
         switch (event.result)
@@ -97,6 +108,9 @@ function timing_result_text(event)
         default:                   return ['SEM DEFESA', 'dano completo', make_colour_rgb(255, 110, 110)];
     }
 }
+
+/// Anel grosso centrado no raio (o ritmo do Firewall também usa)
+const timing_draw_thick_circle = (x, y, radius, thickness) => draw_ring(x, y, radius, thickness);
 
 /// Desenha o minijogo na arena; a defesa aparece em volta do herói (hero_x, hero_y).
 function timing_draw_event(event, x1, y1, x2, y2, hero_x, hero_y)

@@ -1,82 +1,36 @@
 'use strict';
-// Room1 e loop do jogo: step a 60 fps fixos, depois desenho do mapa (por profundidade) e da GUI
-
-const game = {
-    room_width: GAME_DATA.room.width,
-    room_height: GAME_DATA.room.height,
-    tilemap_walls: null,
-    tilemap_dungeon_walls: null,
-    tilemap_dungeon_floor: null,
-    instances: [],
-    player: null,
-    combat: null,
-    dialogue: null,
-    restart_requested: false,
-};
-
-function room_start()
-{
-    const room = GAME_DATA.room;
-    const layers = room.layers;
-
-    // Tiles da camada "Tiles_Walls" (invisível) bloqueiam o movimento
-    game.tilemap_walls = new Tilemap(layers.Tiles_Walls, room.tile_size);
-    game.tilemap_dungeon_walls = new Tilemap(layers.Tiles_Dungeon_Walls, room.tile_size);
-    game.tilemap_dungeon_floor = new Tilemap(layers.Tiles_Dungeon_Floor, room.tile_size);
-
-    game.instances = [];
-    game.player = null;
-    game.combat = null;
-    game.dialogue = null;
-
-    // Create na ordem de criação da room
-    for (const data of room.instances)
-    {
-        let inst = null;
-        switch (data.object)
-        {
-            case 'obj_slime': inst = new Slime(data.x, data.y); break;
-            case 'obj_prop': inst = new Prop(data.x, data.y, data.image_index); break;
-            case 'obj_player': inst = new Player(data.x, data.y); game.player = inst; break;
-        }
-        if (inst) game.instances.push(inst);
-    }
-
-    // Room Start
-    for (const inst of game.instances) inst.room_start();
-}
-
-function room_restart() { game.restart_requested = true; }
-
-function instance_destroy(inst)
-{
-    game.instances = game.instances.filter((other) => other !== inst);
-}
+// Loop do jogo: step a 60 fps fixos, depois desenho do mapa (por profundidade) e da GUI
 
 function game_step()
 {
     input_begin_step();
 
-    // Instâncias criadas durante este step (combate, falas) só rodam a partir do próximo
-    const dialogue = game.dialogue;
-    const combat = game.combat;
+    // Instâncias criadas durante este step só rodam a partir do próximo
+    for (const inst of game.instances.slice())
+    {
+        if (inst.destroyed) continue;
+        inst.xprevious = inst.x;
+        inst.yprevious = inst.y;
+        inst.step();
+    }
 
     for (const inst of game.instances.slice())
     {
-        if (game.instances.includes(inst)) inst.step();
+        if (!inst.destroyed) inst.end_step();
     }
-    if (combat !== null && game.combat === combat) combat.step();
-    if (dialogue !== null && game.dialogue === dialogue) dialogue.step();
 
-    // End Step
-    if (game.dialogue !== null) game.dialogue.end_step();
-
-    if (game.restart_requested)
+    if (game.pending_room !== null)
     {
-        game.restart_requested = false;
-        room_start();
+        const next = game.pending_room;
+        game.pending_room = null;
+        room_load(next);
     }
 }
+
+/// Maior profundidade primeiro; empate fica na ordem de criação
+const by_depth = () => game.instances.map((inst, i) => [inst, i])
+    .sort((a, b) => (b[0].depth - a[0].depth) || (a[1] - b[1]))
+    .map((pair) => pair[0]);
 
 function game_draw()
 {
@@ -86,21 +40,24 @@ function game_draw()
     ctx.fillRect(0, 0, GUI_W, GUI_H);
     gpu_set_texfilter(false);
 
-    // Camadas de tiles (maior profundidade primeiro)
-    game.tilemap_dungeon_floor.draw('spr_ts_dungeon');
-    game.tilemap_dungeon_walls.draw('spr_ts_dungeon');
+    // Camadas de tiles visíveis (maior profundidade primeiro): sempre por baixo das instâncias
+    const layers = game.tile_layers.filter((layer) => layer.visible).sort((a, b) => b.depth - a.depth);
+    for (const layer of layers) layer.draw();
 
-    // Instâncias: quem está mais embaixo na tela é desenhado na frente
-    const ordered = game.instances.slice().sort((a, b) => b.depth - a.depth);
+    const ordered = by_depth();
     for (const inst of ordered) inst.draw();
 
     // GUI
-    if (game.player) game.player.draw_gui();
-    if (game.combat) game.combat.draw_gui();
-    if (game.dialogue) game.dialogue.draw_gui();
+    for (const inst of ordered)
+    {
+        if (!inst.destroyed) inst.draw_gui();
+    }
 
     draw_set_alpha(1);
     draw_set_colour(c_white);
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
+    gpu_set_blend_add(false);
 }
 
 let last_time = 0;
@@ -130,7 +87,7 @@ load_sprites()
     .then(() =>
     {
         document.getElementById('loading').remove();
-        room_start();
+        room_load(GAME_DATA.room_order[0]);
         requestAnimationFrame(frame);
     })
     .catch((error) =>
