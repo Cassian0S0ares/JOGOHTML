@@ -72,7 +72,7 @@ jobs:
 
       - name: Empacotar build.zip + SHA-256
         run: |
-          (cd dist && zip -qrX ../build.zip .)
+          ./scripts/empacotar.sh build.zip
           sha256sum build.zip > build.zip.sha256
           cat build.zip.sha256
           tamanho=$(stat -c %s build.zip)
@@ -188,9 +188,18 @@ jobs:
       contents: write                     # criar a GitHub Release
     steps:
       - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
       - uses: actions/download-artifact@v4
         with:
           name: build-${{ github.sha }}
+      - name: Build reprodutível (refazer o build do commit da tag dá o mesmo SHA-256)
+        run: |
+          npm run build
+          ./scripts/empacotar.sh /tmp/rebuild.zip
+          sha256sum build.zip /tmp/rebuild.zip
+          [ "$(sha256sum < build.zip)" = "$(sha256sum < /tmp/rebuild.zip)" ] || { echo "::error::o rebuild deu outro hash: build não reprodutível"; exit 1; }
       - name: GitHub Release com build.zip, checksum, SBOM e GDD.pdf
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
