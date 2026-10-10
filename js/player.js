@@ -110,6 +110,10 @@ class Player extends Instance
             global.arrived_by_portal = false;
             this.arrival_fade = 1;
             this.arrival_dialogue = true;
+
+            // Chegar num mundo novo vale um descanso longo; a ficha descansada é a que volta se a room reiniciar
+            this.long_rest();
+            global.hero_state = { hp: this.hp, rage_uses: this.rage_uses, exhaustion: this.exhaustion, ally: firewall_save(this.ally) };
         }
 
         // O DDoS já foi derrotado (ex.: a room reiniciou depois de uma derrota): o portal continua aberto
@@ -117,6 +121,15 @@ class Player extends Instance
         {
             instance_create(Portal, BOSS_DDOS_X, BOSS_DDOS_Y);
         }
+    }
+
+    /// Descanso longo: recupera PV e Fúrias, reduz 1 nível de exaustão e restaura as magias e poções do Firewall
+    long_rest()
+    {
+        this.exhaustion = Math.max(0, this.exhaustion - 1);
+        this.hp = this.get_hp_max();
+        this.rage_uses = this.rage_uses_max;
+        firewall_long_rest(this.ally);
     }
 
     get_hp_max() { return (this.exhaustion >= 4) ? Math.floor(this.hp_max_base / 2) : this.hp_max_base; }
@@ -186,10 +199,7 @@ class Player extends Instance
             }
             else
             {
-                this.exhaustion = Math.max(0, this.exhaustion - 1);
-                this.hp = this.get_hp_max();
-                this.rage_uses = this.rage_uses_max;
-                firewall_long_rest(this.ally);
+                this.long_rest();
                 this.rest_message = firewall_in_party() ? 'Descanso longo: PV, Fúrias e magias do Firewall restaurados.' : 'Descanso longo: PV e Fúrias restaurados.';
                 this.rest_timer = this.rest_duration;
                 this.anim_frame = 0;

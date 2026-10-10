@@ -10,6 +10,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/); 
 - Chefe DDoS, que se divide a cada turno; o timing do ataque decide quantos golpes e o jogador escolhe o pedaço alvo.
 - Firewall: conversa com escolhas, entra no time, segue o antivírus e luta junto (magias de fogo com o minijogo de ritmo).
 - Vírus de Elite (um por sala do mundo 2) e chefe final Cavalo de Troia, que rouba habilidades do antivírus.
+- Atravessar o portal para o próximo mundo vale um descanso longo (PV, Fúrias, exaustão e magias do Firewall).
 - Aulinhas dos inimigos derrotados, descanso na fogueira, música do chefe e modo paz (tecla 7) para testes.
 - Testes de unidade dos minijogos e E2E do quiz e do portal.
 
