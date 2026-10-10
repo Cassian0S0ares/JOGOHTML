@@ -105,7 +105,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: build-${{ github.sha }}
 
@@ -141,7 +141,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: build-${{ github.sha }}   # o mesmo artefato que passou em homologação
 
@@ -191,7 +191,7 @@ jobs:
       contents: write                     # criar a GitHub Release
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: build-${{ github.sha }}
       - name: GitHub Release com build.zip, checksum, SBOM e GDD.pdf
