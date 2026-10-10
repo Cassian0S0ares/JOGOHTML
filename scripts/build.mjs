@@ -1,5 +1,5 @@
 // Build reprodutível: copia o jogo para dist/ e grava a versão (SemVer + SHA do commit).
-// Dois builds do mesmo commit só diferem no campo "build" do version.json.
+// Dois builds do mesmo commit geram arquivos idênticos (a data é a do commit), e o build.zip bate byte a byte.
 import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 
@@ -12,7 +12,7 @@ mkdirSync('dist');
 for (const item of ['index.html', 'style.css', 'js', 'assets']) cpSync(item, `dist/${item}`, { recursive: true });
 
 writeFileSync('dist/js/version.js', `'use strict';\nconst GAME_VERSION = ${JSON.stringify({ versao, sha })};\n`);
-writeFileSync('dist/version.json', JSON.stringify({ versao, sha, build: new Date().toISOString() }, null, 2) + '\n');
+writeFileSync('dist/version.json', JSON.stringify({ versao, sha, build: execSync('git log -1 --format=%cI').toString().trim() }, null, 2) + '\n');
 writeFileSync('dist/LEIA-ME.txt', `Projeto Tuba v${versao} (${sha})
 
 Como jogar offline:
