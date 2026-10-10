@@ -4,6 +4,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/); 
 
 ## [Não lançado]
 
+## [1.0.0] - 2026-10-10 · entrega
+
 ### Adicionado
 - Tela de game over (a sala reinicia ao continuar) e tela de fim de jogo ao derrotar o Cavalo de Troia, com a revisão do que foi aprendido.
 - Menu inicial com o botão Jogar e os controles; o jogo só começa depois dele.

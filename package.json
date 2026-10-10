@@ -1,6 +1,6 @@
 {
   "name": "projeto-tuba",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Projeto Tuba: protótipo de jogo educativo entregue por uma esteira CI/CD (Desafio Arcade, DevOps 2º ADS)",
   "license": "MIT",
