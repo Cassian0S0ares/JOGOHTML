@@ -1,0 +1,94 @@
+name: monitor
+
+# Sonda produção e homologação a cada 15 min (INT-08). Os dados vão para o branch "observabilidade"
+# (status/sondas.csv e status/dora.json), para não disparar uma publicação do Pages a cada sonda.
+# Alertas viram Issues com o label "alerta" e fecham sozinhos quando a sonda volta ao normal.
+# Limite conhecido: execuções agendadas do GitHub podem atrasar alguns minutos em horários de pico.
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: monitor
+  cancel-in-progress: false
+
+jobs:
+  sonda:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write                     # commit no branch observabilidade
+      issues: write                       # abrir e fechar alertas
+      actions: read                       # dora.mjs lê as execuções da esteira
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SITE: ${{ vars.SITE_URL }}
+      LIMITE_LATENCIA: "2"
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Branch observabilidade (criado na primeira execução)
+        run: |
+          if git fetch -q origin observabilidade; then
+            git worktree add -q obs origin/observabilidade
+          else
+            git worktree add -q --detach obs && (cd obs && git checkout -q --orphan observabilidade && git rm -rqf .)
+          fi
+          mkdir -p obs/status
+          [ -f obs/status/sondas.csv ] || echo "data,alvo,codigo,tempo,versao" > obs/status/sondas.csv
+
+      - name: Sondar produção e homologação
+        id: sonda
+        run: |
+          estavel=$(curl -fsS "$SITE/rollout.json?t=$(date +%s)" | jq -r .estavel || echo "")
+          fora=""; lenta=""
+          # Produção: o carregador e a release estável que ele serve; homologação: /hml/
+          for alvo in "prd|$SITE/|$SITE/releases/$estavel/version.json" "hml|$SITE/hml/|$SITE/hml/version.json"; do
+            IFS='|' read -r nome url versao_url <<< "$alvo"
+            read -r codigo tempo < <(curl -s -L -o /dev/null -w '%{http_code} %{time_total}' "$url?t=$(date +%s)")
+            versao=$(curl -fsS "$versao_url?t=$(date +%s)" | jq -r '.versao + "-" + .sha' 2>/dev/null || echo "?")
+            echo "$(date -u +%FT%TZ),$nome,$codigo,$tempo,$versao" | tee -a obs/status/sondas.csv
+            [ "$codigo" = "200" ] || fora="$fora $nome($codigo)"
+            awk -v t="$tempo" -v l="$LIMITE_LATENCIA" 'BEGIN { exit !(t > l) }' && lenta="$lenta $nome(${tempo}s)"
+          done
+          echo "fora=$fora" >> "$GITHUB_OUTPUT"
+          echo "lenta=$lenta" >> "$GITHUB_OUTPUT"
+
+      - name: Alertas JogoForaDoAr e LatenciaAlta
+        run: |
+          gh label create alerta --color D93F0B --force >/dev/null
+          alerta() {   # alerta <título> <detalhe; vazio = normal>
+            aberta=$(gh issue list --label alerta --state open --search "$1 in:title" --json number -q '.[0].number')
+            if [ -n "$2" ]; then
+              [ -n "$aberta" ] || gh issue create --label alerta --title "$1" \
+                --body "Sonda de $(date -u +%FT%TZ):$2. Execução: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            elif [ -n "$aberta" ]; then
+              gh issue close "$aberta" --comment "Normalizado em $(date -u +%FT%TZ)."
+            fi
+          }
+          alerta JogoForaDoAr "${{ steps.sonda.outputs.fora }}"
+          alerta LatenciaAlta "${{ steps.sonda.outputs.lenta }}"
+
+      - name: Métricas DORA
+        run: node scripts/dora.mjs > obs/status/dora.json && cat obs/status/dora.json
+
+      - name: Gravar no branch observabilidade
+        run: |
+          cd obs
+          git config user.name "monitor"
+          git config user.email "monitor@users.noreply.github.com"
+          git add status
+          git commit -qm "monitor: sonda $(date -u +%FT%TZ)"
+          for tentativa in 1 2 3; do
+            git push -q origin HEAD:observabilidade && break
+            git pull -q --rebase origin observabilidade
+          done

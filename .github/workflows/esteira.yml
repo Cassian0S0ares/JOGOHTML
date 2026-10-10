@@ -148,6 +148,9 @@ jobs:
       - name: Conferir o checksum do artefato
         run: sha256sum -c build.zip.sha256
 
+      - name: Publicar o carregador e o painel /status/ (pages/)
+        run: ./scripts/publicar.sh paginas pages
+
       - name: Publicar em gh-pages/releases/<sha>/
         run: ./scripts/publicar.sh release build.zip "${GITHUB_SHA::7}"
 

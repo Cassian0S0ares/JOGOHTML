@@ -2,10 +2,11 @@
 # Publica o build.zip no branch gh-pages (só a pipeline escreve nele).
 #   publicar.sh hml <build.zip>            -> gh-pages/hml/ (substitui a homologação)
 #   publicar.sh release <build.zip> <sha>  -> gh-pages/releases/<sha>/ (nunca sobrescreve)
+#   publicar.sh paginas <pasta>            -> raiz do gh-pages (carregador index.html e painel status/)
 set -euo pipefail
 
-modo=${1:?uso: publicar.sh hml|release <build.zip> [sha]}
-zip=$(realpath "${2:?informe o build.zip}")
+modo=${1:?uso: publicar.sh hml|release|paginas <build.zip|pasta> [sha]}
+zip=$(realpath "${2:?informe o build.zip (ou a pasta pages/)}")
 sha=${3:-}
 ator=${GITHUB_ACTOR:-$(git config user.name)}
 
@@ -33,11 +34,22 @@ case "$modo" in
         unzip -q "$zip" -d "releases/$sha"
         destino="releases/$sha/"
         ;;
+    paginas)
+        cp -r "$zip"/. .
+        # Pastas copiadas por engano quando o gh-pages foi criado: não fazem parte do site
+        rm -rf node_modules dist docs reports test-results
+        git add -A
+        git diff --cached --quiet && { echo "páginas sem mudança"; exit 0; }
+        git commit -qm "deploy: páginas (carregador e status/) por ${ator}"
+        destino="páginas"
+        ;;
     *) echo "modo inválido: $modo"; exit 2 ;;
 esac
 
-git add -A
-git commit -qm "deploy: ${destino} ($(cat "$destino/version.json" | tr -d '\n ' )) por ${ator}"
+if [ "$modo" != paginas ]; then
+    git add -A
+    git commit -qm "deploy: ${destino} ($(cat "$destino/version.json" | tr -d '\n ' )) por ${ator}"
+fi
 for tentativa in 1 2 3; do
     git push -q origin HEAD:gh-pages && break
     git pull -q --rebase origin gh-pages
