@@ -79,7 +79,7 @@ jobs:
           echo "build.zip: $((tamanho / 1024)) KiB"
           [ "$tamanho" -lt $((25 * 1024 * 1024)) ] || { echo "::error::build.zip acima de 25 MB"; exit 1; }
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: build-${{ github.sha }}
@@ -120,7 +120,7 @@ jobs:
           npm ci && npx playwright install --with-deps chromium
           BASE_URL="${{ vars.SITE_URL }}/hml/" EXPECTED_SHA="${GITHUB_SHA::7}" npx playwright test
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: e2e-hml-${{ github.sha }}
