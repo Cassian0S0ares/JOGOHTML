@@ -56,6 +56,7 @@ tag vX.Y.Z ──▶ ci ──▶ release (GitHub Release com build.zip, checksu
 - **Um artefato, vários ambientes:** o `build.zip` é gerado uma vez no `ci`; homologação e produção descompactam o mesmo arquivo (o `deploy-prd` confere o SHA-256 antes de publicar).
 - **gh-pages** (escrito só pela pipeline): `/hml/`, `/releases/<sha>/` (nunca sobrescritas), `/index.html` (carregador) e `/rollout.json` (`estavel`, `anterior`, `canario`, `percentual`).
 - **Entrega progressiva:** canário com 10% das sessões; quem cai numa versão continua nela (escolha guardada no `localStorage`).
+- **Triagem como código:** o workflow `triagem` (todo dia e à mão) monta `submissao/` (GDD.pdf, build.zip, LINK_DO_JOGO.txt, pitch.mp4 e MANIFESTO.sha256) e roda `scripts/triagem.sh`, que reproduz a triagem do concurso contra a produção; se reprovar, abre uma Issue `alerta`.
 - **Rollback:** automático quando o smoke falha, ou manual pelo workflow `rollback` (Actions → rollback → Run workflow). Rollback é trocar o ponteiro no `rollout.json`, sem recompilar.
 
 ### Configuração do repositório (uma vez)
