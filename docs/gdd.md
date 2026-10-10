@@ -107,7 +107,7 @@ A dificuldade sobe em três eixos: inimigos mais resistentes, minijogos que pede
 
 ```
  ┌───────────────┐
- │ Abrir o link  │  (sem menu: o jogo começa direto no mundo 1)
+ │ Menu inicial  │  Jogar (Enter ou clique); os controles já aparecem ali
  └───────┬───────┘
          v
  ┌───────────────────────┐   E no computador   ┌──────────────────────┐
@@ -158,7 +158,7 @@ Cada mundo é uma room de uma tela (1366 × 768) com salas ligadas por corredore
 - **Combate:** cenário, ficha de quem está agindo, menu de ações, dados animados e registro de combate com cada rolagem explicada (ex.: `Você: d20(14)+2 = 16`).
 - **Game over:** "Sistema comprometido", com uma dica de combate; Enter reinicia a sala.
 - **Fim de jogo:** depois da última aulinha do Cavalo de Troia, "Rede protegida" com a revisão do que o jogador aprendeu em cada ameaça; Enter recomeça do mundo 1.
-- **Menu inicial:** não há; o jogo abre direto no mundo 1, e a primeira placa e a HUD mostram os controles.
+- **Menu inicial:** título, a premissa em uma linha, o botão Jogar (Enter, Espaço, E ou clique) e a lista de controles.
 
 | | |
 |---|---|
@@ -166,6 +166,7 @@ Cada mundo é uma room de uma tela (1366 × 768) com salas ligadas por corredore
 | ![Quiz do mundo 1](img/tela-quiz.png) | ![Caixa de Entrada (phishing)](img/tela-caixa-entrada.png) |
 | ![Central de Atualizações (worm)](img/tela-atualizacoes.png) | ![Regras do Firewall](img/tela-regras-firewall.png) |
 | ![Game over](img/tela-game-over.png) | ![Fim de jogo](img/tela-fim.png) |
+| ![Menu inicial](img/tela-menu.png) | |
 
 **Acessibilidade.**
 
@@ -208,7 +209,7 @@ Declaramos que o Squad detém os direitos de uso sobre todos os materiais listad
 
 ## 12. Ideias adicionais e próximos passos
 
-- **Menu inicial** com "Jogar", "Como jogar" e créditos.
+- **Créditos** no menu inicial.
 - **Versão mobile:** controles de toque (direcional virtual e botões) e layout que caiba em tela de celular.
 - **Acessibilidade:** remapeamento de teclas, tamanho de fonte ajustável e modo de alto contraste.
 - **Salvar progresso** no próprio navegador (sem dados pessoais) para não recomeçar do mundo 1.

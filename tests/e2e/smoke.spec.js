@@ -1,6 +1,31 @@
 /* global game, instance_exists, instance_create, instance_number, instance_find, room_goto, Combat, Portal, TrojanBoss */
 import { expect, test } from '@playwright/test';
 
+/// Abre o jogo e passa pelo menu inicial
+async function abrir(page)
+{
+    await page.goto('./');
+    await expect(page.locator('#loading')).toHaveCount(0, { timeout: 15_000 });
+    await page.locator('#jogar').click();
+    await expect(page.locator('#menu')).toHaveCount(0);
+}
+
+test('o menu inicial aparece e o Enter começa o jogo', async ({ page }) =>
+{
+    const erros = [];
+    page.on('pageerror', (e) => erros.push(e.message));
+
+    await page.goto('./');
+    await expect(page.locator('#menu')).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator('#menu h1')).toHaveText('Projeto Tuba');
+    expect(await page.evaluate(() => game.room)).toBeNull();
+
+    await page.keyboard.press('Enter');
+    await expect(page.locator('#menu')).toHaveCount(0);
+    await expect.poll(() => page.evaluate(() => game.room)).toBe('Room1');
+    expect(erros).toEqual([]);
+});
+
 // Smoke: o jogo abre, carrega os sprites, desenha a sala e mostra a versão.
 // EXPECTED_SHA (opcional) confere se a URL serve o commit que acabou de ser publicado.
 test('o jogo abre e mostra a versão', async ({ page }) =>
@@ -8,8 +33,7 @@ test('o jogo abre e mostra a versão', async ({ page }) =>
     const erros = [];
     page.on('pageerror', (e) => erros.push(e.message));
 
-    await page.goto('./');
-    await expect(page.locator('#loading')).toHaveCount(0, { timeout: 15_000 });
+    await abrir(page);
     await expect(page.locator('#versao')).toHaveText(/^v\d+\.\d+\.\d+ · [0-9a-f]{7}$/);
     if (process.env.EXPECTED_SHA) await expect(page.locator('#versao')).toContainText(process.env.EXPECTED_SHA);
 
@@ -29,8 +53,7 @@ test('o jogador anda pela sala', async ({ page }) =>
     const erros = [];
     page.on('pageerror', (e) => erros.push(e.message));
 
-    await page.goto('./');
-    await expect(page.locator('#loading')).toHaveCount(0, { timeout: 15_000 });
+    await abrir(page);
     await page.locator('#game').click();
 
     const antes = await page.evaluate(() => ({ x: game.player.x, y: game.player.y }));
@@ -48,8 +71,7 @@ test('o computador abre o quiz e o Esc fecha', async ({ page }) =>
     const erros = [];
     page.on('pageerror', (e) => erros.push(e.message));
 
-    await page.goto('./');
-    await expect(page.locator('#loading')).toHaveCount(0, { timeout: 15_000 });
+    await abrir(page);
     await page.locator('#game').click();
 
     // Modo paz para nenhum vírus começar luta no caminho; o antivírus vai para perto do computador de cima à esquerda
@@ -69,8 +91,7 @@ test('o portal leva para a Room2 com o Firewall', async ({ page }) =>
     const erros = [];
     page.on('pageerror', (e) => erros.push(e.message));
 
-    await page.goto('./');
-    await expect(page.locator('#loading')).toHaveCount(0, { timeout: 15_000 });
+    await abrir(page);
 
     await page.evaluate(() =>
     {
@@ -87,8 +108,7 @@ test('perder o combate mostra o game over e a sala reinicia', async ({ page }) =
     const erros = [];
     page.on('pageerror', (e) => erros.push(e.message));
 
-    await page.goto('./');
-    await expect(page.locator('#loading')).toHaveCount(0, { timeout: 15_000 });
+    await abrir(page);
     await page.locator('#game').click();
 
     // Combate contra um vírus em que o golpe seguinte derruba o antivírus
@@ -115,8 +135,7 @@ test('vencer o Cavalo de Troia mostra a tela de fim de jogo', async ({ page }) =
     const erros = [];
     page.on('pageerror', (e) => erros.push(e.message));
 
-    await page.goto('./');
-    await expect(page.locator('#loading')).toHaveCount(0, { timeout: 15_000 });
+    await abrir(page);
     await page.locator('#game').click();
 
     await page.evaluate(() => { global.boss_ddos_defeated = true; room_goto('Room2'); });

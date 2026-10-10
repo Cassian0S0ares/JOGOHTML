@@ -6,6 +6,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/); 
 
 ### Adicionado
 - Tela de game over (a sala reinicia ao continuar) e tela de fim de jogo ao derrotar o Cavalo de Troia, com a revisão do que foi aprendido.
+- Menu inicial com o botão Jogar e os controles; o jogo só começa depois dele.
 - Port completo do protótipo GameMaker atual: os dois mundos (masmorra e data center) e a troca de room pelo portal.
 - Computadores com minijogos: quiz por sala no mundo 1; Caixa de Entrada (phishing), Central de Atualizações (worm) e Regras do Firewall no mundo 2.
 - Chefe DDoS, que se divide a cada turno; o timing do ataque decide quantos golpes e o jogador escolhe o pedaço alvo.
