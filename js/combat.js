@@ -508,6 +508,12 @@ class Combat extends Instance
                     foe.is_moving = false;
                     foe.alert_timer = 0;
                 }
+
+                // Caiu o chefe da room: os inimigos que sobraram somem junto
+                if (this.is_boss || this.is_trojan)
+                {
+                    for (const enemy of instances_of('obj_slime')) if (enemy !== foe) enemy.vanish();
+                }
                 instance_destroy(this);
                 break;
 

@@ -8,6 +8,14 @@ function debug_peace()
     return global.peace_mode === true;
 }
 
+/// Verdadeiro depois que o chefe da room atual foi derrotado (DDoS na Room1, Cavalo de Troia na Room2).
+function world_boss_defeated()
+{
+    if (game.room === 'Room1') return global.boss_ddos_defeated === true;
+    if (game.room === 'Room2') return trojan_defeated();
+    return false;
+}
+
 /// Verdadeiro durante o descanso longo (5 s na fogueira): os inimigos somem e param.
 function world_resting()
 {

@@ -56,6 +56,9 @@ class Slime extends Instance
         this.lesson_started = false;
         this.fade_timer = 0;
 
+        // O chefe da room caiu: os inimigos que sobraram somem piscando (sem aulinha)
+        this.vanishing = false;
+
         this.move_speed = 1;
         this.anim_speed = 0.12;
         this.anim_frame = random(4);
@@ -91,6 +94,19 @@ class Slime extends Instance
         this.hitbox_bottom = -1;
 
         this.depth = -this.y;
+
+        // Chefe da room já derrotado (ex.: a room reiniciou depois de uma derrota): os inimigos comuns não voltam
+        if (world_boss_defeated() && !this.is('obj_boss_trojan')) instance_destroy(this);
+    }
+
+    /// Some piscando, sem lutar nem dar aulinha (chamado quando o chefe da room é derrotado)
+    vanish()
+    {
+        this.vanishing = true;
+        this.is_chasing = false;
+        this.is_moving = false;
+        this.alert_timer = 0;
+        this.fade_timer = 0;
     }
 
     /// Dormente: não anda nem ataca (o Vírus de Elite espera o Firewall entrar no time)
@@ -110,6 +126,13 @@ class Slime extends Instance
 
         // Descanso na fogueira: os inimigos somem por 5 segundos
         if (world_resting()) return;
+
+        if (this.vanishing)
+        {
+            this.fade_timer += 1;
+            if (this.fade_timer >= 40) instance_destroy(this);
+            return;
+        }
 
         // Derrotado: espera a aulinha acabar e some piscando
         if (this.is_dying)
@@ -273,7 +296,7 @@ class Slime extends Instance
         let alpha = (this.stun_timer > 0 && Math.floor(this.stun_timer / 8) % 2 === 0) ? 0.4 : 1;
 
         // Derrotado: pisca e vai sumindo depois da aulinha
-        if (this.is_dying && this.fade_timer > 0) alpha = (Math.floor(this.fade_timer / 4) % 2 === 0) ? 1 - this.fade_timer / 40 : 0.2;
+        if ((this.is_dying || this.vanishing) && this.fade_timer > 0) alpha = (Math.floor(this.fade_timer / 4) % 2 === 0) ? 1 - this.fade_timer / 40 : 0.2;
         draw_sprite_ext(this.sprite_index, this.image_index, this.x, this.y, this.image_xscale, this.image_yscale, this.image_angle, this.image_blend, alpha);
 
         // "!" acima da cabeça quando avista o player
