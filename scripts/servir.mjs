@@ -11,7 +11,7 @@ const tipos = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/cs
 createServer(async (req, res) =>
 {
     let caminho = normalize(decodeURIComponent(new URL(req.url, 'http://x').pathname)).replace(/^(\.\.[/\\])+/, '');
-    if (caminho.endsWith('/')) caminho += 'index.html';
+    if (/[\\/]$/.test(caminho)) caminho += 'index.html';   // no Windows o normalize troca / por \
     try
     {
         const corpo = await readFile(join(raiz, caminho));

@@ -5,6 +5,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/); 
 ## [Não lançado]
 
 ### Adicionado
+- Tela de game over (a sala reinicia ao continuar) e tela de fim de jogo ao derrotar o Cavalo de Troia, com a revisão do que foi aprendido.
 - Port completo do protótipo GameMaker atual: os dois mundos (masmorra e data center) e a troca de room pelo portal.
 - Computadores com minijogos: quiz por sala no mundo 1; Caixa de Entrada (phishing), Central de Atualizações (worm) e Regras do Firewall no mundo 2.
 - Chefe DDoS, que se divide a cada turno; o timing do ataque decide quantos golpes e o jogador escolhe o pedaço alvo.
@@ -13,7 +14,10 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/); 
 - Derrotar o chefe da room faz os inimigos que sobraram sumirem (e eles não voltam se a room reiniciar).
 - Atravessar o portal para o próximo mundo vale um descanso longo (PV, Fúrias, exaustão e magias do Firewall).
 - Aulinhas dos inimigos derrotados, descanso na fogueira e modo paz (tecla 7) para testes.
-- Testes de unidade dos minijogos e E2E do quiz e do portal.
+- Testes de unidade dos minijogos e E2E do quiz, do portal, do game over e da tela de fim.
+
+### Corrigido
+- `scripts/servir.mjs` não servia o `index.html` da raiz no Windows (E2E local falhava).
 
 ### Alterado
 - Músicas removidas (mapa, combate e chefe); fica só o som dos dados.
