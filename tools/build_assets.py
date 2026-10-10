@@ -37,7 +37,8 @@ TEXTURE_SCALE = {
     'spr_senatir_face_01': 0.6,
 }
 
-SOUNDS = ['snd_overworld_music', 'snd_combat_music', 'snd_boss_music', 'snd_dice_roll']
+# Sem músicas: só o efeito dos dados
+SOUNDS = ['snd_dice_roll']
 ROOMS = ['Room1', 'Room2']
 
 os.makedirs(f'{OUT}/assets/sprites', exist_ok=True)

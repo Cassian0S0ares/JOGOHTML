@@ -12,10 +12,11 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/); 
 - Vírus de Elite (um por sala do mundo 2) e chefe final Cavalo de Troia, que rouba habilidades do antivírus.
 - Derrotar o chefe da room faz os inimigos que sobraram sumirem (e eles não voltam se a room reiniciar).
 - Atravessar o portal para o próximo mundo vale um descanso longo (PV, Fúrias, exaustão e magias do Firewall).
-- Aulinhas dos inimigos derrotados, descanso na fogueira, música do chefe e modo paz (tecla 7) para testes.
+- Aulinhas dos inimigos derrotados, descanso na fogueira e modo paz (tecla 7) para testes.
 - Testes de unidade dos minijogos e E2E do quiz e do portal.
 
 ### Alterado
+- Músicas removidas (mapa, combate e chefe); fica só o som dos dados.
 - `tools/build_assets.py` exporta todos os sprites usados, os sons e as duas rooms; sprites grandes saem reduzidos na folha.
 - O jogo passou a ter um runtime no estilo GameMaker (`js/runtime.js`): objetos com herança, `instance_exists`, rooms e variáveis globais.
 

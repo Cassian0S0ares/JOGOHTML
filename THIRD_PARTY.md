@@ -16,7 +16,6 @@ Todo ativo que não foi criado pelo squad precisa estar aqui, com autor, link e 
 | `sprites/spr_tree.png`, `spr_bush.png`, `spr_grass_tuft.png`, `spr_prop.png` | Sprite | TODO | TODO | TODO |
 | `sprites/spr_combat_bg.png` | Fundo | TODO | TODO | TODO |
 | `sprites/spr_font_ui.png` | Fonte bitmap | TODO | TODO | TODO |
-| `sounds/snd_overworld_music.ogg`, `snd_combat_music.ogg`, `snd_boss_music.ogg` | Música | TODO | TODO | TODO |
 | `sounds/snd_dice_roll.ogg` | Efeito | TODO | TODO | TODO |
 
 ## Regras do jogo

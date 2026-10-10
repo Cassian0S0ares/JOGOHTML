@@ -7,10 +7,6 @@ class Player extends Instance
 
     create()
     {
-        // Música do mapa em loop (o stop evita tocar duas vezes quando a room reinicia)
-        audio_stop_sound('snd_overworld_music');
-        this.overworld_music = audio_play_sound('snd_overworld_music', true, 0.6);
-
         // Ficha
         this.char_name = 'Antivírus';
         this.char_class = 'Bárbaro 3 - Berserker';
@@ -141,16 +137,7 @@ class Player extends Instance
 
     step()
     {
-        // A música do mapa pausa durante o combate e continua de onde parou
         const in_combat = instance_exists('obj_combat');
-        if (in_combat !== audio_is_paused(this.overworld_music))
-        {
-            if (in_combat) audio_pause_sound(this.overworld_music);
-            else audio_resume_sound(this.overworld_music);
-        }
-
-        // Garantia do loop: se a música do mapa parar (fora do combate), recomeça do início
-        if (!in_combat && !audio_is_playing(this.overworld_music)) this.overworld_music = audio_play_sound('snd_overworld_music', true, 0.6);
 
         // Chegada por portal: o clarão some e depois vem a fala
         if (this.arrival_fade > 0)

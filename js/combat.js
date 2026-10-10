@@ -13,11 +13,6 @@ class Combat extends Instance
         const foe = this.foe;
         this.depth = -10000;
 
-        // Música de combate em loop (a música do mapa é pausada pelo antivírus); os chefes finais têm a deles
-        const is_final_boss = foe.is('obj_boss_ddos') || foe.is('obj_boss_trojan');
-        this.combat_music_asset = is_final_boss ? 'snd_boss_music' : 'snd_combat_music';
-        this.combat_music = audio_play_sound(this.combat_music_asset, true, 0.6);
-
         this.state = CombatState.intro;
         this.wait_timer = 10;
         this.round_number = 1;
@@ -480,8 +475,6 @@ class Combat extends Instance
     {
         const hero = this.hero;
         const foe = this.foe;
-
-        audio_stop_sound(this.combat_music);
 
         // O Cavalo de Troia devolve tudo que roubou quando a luta acaba (de um jeito ou de outro)
         if (this.is_trojan)
@@ -1715,8 +1708,6 @@ class Combat extends Instance
     {
         this.anim_time += 1;
 
-        // Garantia do loop: se a música parar, recomeça do início
-        if (!audio_is_playing(this.combat_music)) this.combat_music = audio_play_sound(this.combat_music_asset, true, 0.6);
         this.hero_lunge = Math.max(0, this.hero_lunge - 1);
         this.foe_lunge = Math.max(0, this.foe_lunge - 1);
         this.foe_hatch = Math.max(0, this.foe_hatch - 1);
