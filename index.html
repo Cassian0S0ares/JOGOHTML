@@ -10,6 +10,17 @@
     <main id="screen">
         <canvas id="game" width="1366" height="768" tabindex="0"></canvas>
         <div id="loading">Carregando...</div>
+        <section id="menu" hidden>
+            <h1>Projeto Tuba</h1>
+            <p>O sistema foi infectado. Você é o Antivírus.</p>
+            <button id="jogar" type="button">Jogar</button>
+            <dl>
+                <dt>WASD / Setas</dt><dd>andar</dd>
+                <dt>E</dt><dd>conversar, usar computadores e o portal</dd>
+                <dt>R</dt><dd>descanso longo na fogueira</dd>
+                <dt>Enter / Espaço</dt><dd>confirmar no combate e nos minijogos</dd>
+            </dl>
+        </section>
         <div id="versao"></div>
     </main>
 
@@ -42,6 +53,7 @@
     <script src="js/patch.js"></script>
     <script src="js/netfilter.js"></script>
     <script src="js/combat.js"></script>
+    <script src="js/end_screen.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

@@ -1,5 +1,30 @@
-/* global game, instance_exists, instance_create, instance_number, Portal */
+/* global game, instance_exists, instance_create, instance_number, instance_find, room_goto, Combat, Portal, TrojanBoss */
 import { expect, test } from '@playwright/test';
+
+/// Abre o jogo e passa pelo menu inicial
+async function abrir(page)
+{
+    await page.goto('./');
+    await expect(page.locator('#loading')).toHaveCount(0, { timeout: 15_000 });
+    await page.locator('#jogar').click();
+    await expect(page.locator('#menu')).toHaveCount(0);
+}
+
+test('o menu inicial aparece e o Enter começa o jogo', async ({ page }) =>
+{
+    const erros = [];
+    page.on('pageerror', (e) => erros.push(e.message));
+
+    await page.goto('./');
+    await expect(page.locator('#menu')).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator('#menu h1')).toHaveText('Projeto Tuba');
+    expect(await page.evaluate(() => game.room)).toBeNull();
+
+    await page.keyboard.press('Enter');
+    await expect(page.locator('#menu')).toHaveCount(0);
+    await expect.poll(() => page.evaluate(() => game.room)).toBe('Room1');
+    expect(erros).toEqual([]);
+});
 
 // Smoke: o jogo abre, carrega os sprites, desenha a sala e mostra a versão.
 // EXPECTED_SHA (opcional) confere se a URL serve o commit que acabou de ser publicado.
@@ -8,8 +33,7 @@ test('o jogo abre e mostra a versão', async ({ page }) =>
     const erros = [];
     page.on('pageerror', (e) => erros.push(e.message));
 
-    await page.goto('./');
-    await expect(page.locator('#loading')).toHaveCount(0, { timeout: 15_000 });
+    await abrir(page);
     await expect(page.locator('#versao')).toHaveText(/^v\d+\.\d+\.\d+ · [0-9a-f]{7}$/);
     if (process.env.EXPECTED_SHA) await expect(page.locator('#versao')).toContainText(process.env.EXPECTED_SHA);
 
@@ -29,8 +53,7 @@ test('o jogador anda pela sala', async ({ page }) =>
     const erros = [];
     page.on('pageerror', (e) => erros.push(e.message));
 
-    await page.goto('./');
-    await expect(page.locator('#loading')).toHaveCount(0, { timeout: 15_000 });
+    await abrir(page);
     await page.locator('#game').click();
 
     const antes = await page.evaluate(() => ({ x: game.player.x, y: game.player.y }));
@@ -48,8 +71,7 @@ test('o computador abre o quiz e o Esc fecha', async ({ page }) =>
     const erros = [];
     page.on('pageerror', (e) => erros.push(e.message));
 
-    await page.goto('./');
-    await expect(page.locator('#loading')).toHaveCount(0, { timeout: 15_000 });
+    await abrir(page);
     await page.locator('#game').click();
 
     // Modo paz para nenhum vírus começar luta no caminho; o antivírus vai para perto do computador de cima à esquerda
@@ -69,8 +91,7 @@ test('o portal leva para a Room2 com o Firewall', async ({ page }) =>
     const erros = [];
     page.on('pageerror', (e) => erros.push(e.message));
 
-    await page.goto('./');
-    await expect(page.locator('#loading')).toHaveCount(0, { timeout: 15_000 });
+    await abrir(page);
 
     await page.evaluate(() =>
     {
@@ -79,5 +100,55 @@ test('o portal leva para a Room2 com o Firewall', async ({ page }) =>
     });
     await expect.poll(() => page.evaluate(() => game.room), { timeout: 5_000 }).toBe('Room2');
     expect(await page.evaluate(() => [instance_exists('obj_firewall'), instance_number('obj_computer'), instance_number('obj_virus_elite')])).toEqual([true, 3, 5]);
+    expect(erros).toEqual([]);
+});
+
+test('perder o combate mostra o game over e a sala reinicia', async ({ page }) =>
+{
+    const erros = [];
+    page.on('pageerror', (e) => erros.push(e.message));
+
+    await abrir(page);
+    await page.locator('#game').click();
+
+    // Combate contra um vírus em que o golpe seguinte derruba o antivírus
+    await page.evaluate(() => instance_create(Combat, 0, 0, { hero: game.player, foe: instance_find('obj_slime') }).damage_hero(999));
+    // O combate mostra "Você caiu" e fecha com uma tecla; aí vem o game over
+    await expect.poll(async () =>
+    {
+        const em_combate = await page.evaluate(() => instance_exists('obj_combat'));
+        if (em_combate) await page.keyboard.press('Enter');
+        return em_combate;
+    }, { timeout: 10_000 }).toBe(false);
+    expect(await page.evaluate(() => instance_exists('obj_end_screen'))).toBe(true);
+
+    // A tela ignora teclas no primeiro segundo; depois o Enter reinicia a sala
+    await page.waitForTimeout(1200);
+    await page.keyboard.press('Enter');
+    await expect.poll(() => page.evaluate(() => instance_exists('obj_end_screen'))).toBe(false);
+    expect(await page.evaluate(() => game.player.hp > 0)).toBe(true);
+    expect(erros).toEqual([]);
+});
+
+test('vencer o Cavalo de Troia mostra a tela de fim de jogo', async ({ page }) =>
+{
+    const erros = [];
+    page.on('pageerror', (e) => erros.push(e.message));
+
+    await abrir(page);
+    await page.locator('#game').click();
+
+    await page.evaluate(() => { global.boss_ddos_defeated = true; room_goto('Room2'); });
+    await expect.poll(() => page.evaluate(() => game.room)).toBe('Room2');
+
+    // Cavalo derrotado: a última aulinha abre; pular as falas (e as do Firewall antes) até a tela de fim.
+    // Intervalo fixo curto: o padrão do poll cresce até 1 s por Enter e estoura o tempo num runner lento
+    await page.evaluate(() => { global.peace_mode = true; instance_create(TrojanBoss, 720, 360).is_dying = true; });
+    await expect.poll(async () =>
+    {
+        await page.keyboard.press('Enter');
+        return page.evaluate(() => instance_exists('obj_end_screen'));
+    }, { timeout: 25_000, intervals: [100] }).toBe(true);
+    expect(await page.evaluate(() => instance_find('obj_end_screen').kind)).toBe('win');
     expect(erros).toEqual([]);
 });

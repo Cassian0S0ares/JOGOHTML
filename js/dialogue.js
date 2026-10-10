@@ -11,8 +11,8 @@ const dialogue_choice = (speaker, text, options, portrait = 'spr_senatir_face_01
 /// depois das falas, com a opção já usada em cinza. action (opcional) roda quando ela é escolhida.
 const dialogue_option = (label, lines, ends = false, action = undefined) => ({ label, lines, ends, action, picked: false });
 
-/// Verdadeiro enquanto a caixa de falas ou um minijogo de computador está aberto (o mapa fica congelado).
-const dialogue_is_active = () => instance_exists('obj_dialogue') || quiz_is_active();
+/// Verdadeiro enquanto a caixa de falas, um minijogo de computador ou uma tela de fim está aberta (o mapa fica congelado).
+const dialogue_is_active = () => instance_exists('obj_dialogue') || quiz_is_active() || instance_exists('obj_end_screen');
 
 /// Abre a caixa com uma lista de falas. Ignora se já houver uma fala na tela.
 function dialogue_start(lines)
