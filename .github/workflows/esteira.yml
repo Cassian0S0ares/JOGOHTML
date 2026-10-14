@@ -52,6 +52,7 @@ jobs:
       - name: Dependências e SBOM
         run: |
           mkdir -p reports
+          set -o pipefail
           npm audit --omit=dev --audit-level=critical | tee reports/npm-audit.txt
           npm sbom --sbom-format cyclonedx > reports/sbom.json
 
