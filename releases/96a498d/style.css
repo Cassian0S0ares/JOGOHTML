@@ -1,0 +1,88 @@
+html,
+body {
+    margin: 0;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+}
+
+#screen {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Mantém a proporção 1366x768 da room ocupando o máximo da janela */
+#game {
+    width: min(100vw, calc(100vh * 1366 / 768));
+    height: min(100vh, calc(100vw * 768 / 1366));
+    image-rendering: pixelated;
+    outline: none;
+    cursor: default;
+}
+
+#loading {
+    position: absolute;
+    color: #c0c0c0;
+    font: 16px monospace;
+}
+
+/* Versão do build, discreta no canto da tela */
+#versao {
+    position: absolute;
+    right: 8px;
+    bottom: 6px;
+    color: rgba(192, 192, 192, 0.5);
+    font: 11px monospace;
+    pointer-events: none;
+}
+
+/* Menu inicial, por cima do canvas ainda preto */
+#menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    color: #c0c0c0;
+    font: 16px monospace;
+    text-align: center;
+}
+
+#menu[hidden] { display: none; }
+
+#menu h1 {
+    margin: 0;
+    color: #00ff00;
+    font-size: clamp(32px, 7vw, 72px);
+    letter-spacing: 4px;
+    text-shadow: 4px 4px 0 #004000;
+}
+
+#menu p { margin: 0 0 16px; color: #fff; }
+
+#jogar {
+    padding: 12px 48px;
+    border: 2px solid #00ff00;
+    background: #002000;
+    color: #00ff00;
+    font: 24px monospace;
+    cursor: pointer;
+}
+
+#jogar:hover,
+#jogar:focus-visible { background: #00ff00; color: #000; outline: none; }
+
+#menu dl {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 6px 16px;
+    margin: 24px 0 0;
+    text-align: left;
+}
+
+#menu dt { color: #ffff00; text-align: right; }
+#menu dd { margin: 0; }
