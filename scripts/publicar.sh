@@ -48,6 +48,8 @@ esac
 
 if [ "$modo" != paginas ]; then
     git add -A
+    # Re-run do mesmo commit: o build é reprodutível, então não há o que commitar
+    git diff --cached --quiet && { echo "${destino} já está com este build"; exit 0; }
     git commit -qm "deploy: ${destino} ($(cat "$destino/version.json" | tr -d '\n ' )) por ${ator}"
 fi
 for tentativa in 1 2 3; do
