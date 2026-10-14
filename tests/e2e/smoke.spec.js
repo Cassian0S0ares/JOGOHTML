@@ -13,6 +13,9 @@ test('o jogo abre e mostra a versão', async ({ page }) =>
     await expect(page.locator('#versao')).toHaveText(/^v\d+\.\d+\.\d+ · [0-9a-f]{7}$/);
     if (process.env.EXPECTED_SHA) await expect(page.locator('#versao')).toContainText(process.env.EXPECTED_SHA);
 
+    const versao = await page.evaluate(async () => (await fetch('version.json')).json());
+    await expect(page.locator('#versao')).toContainText(`v${versao.versao} · ${versao.sha}`);
+
     // A sala foi desenhada: o canvas tem pixels que não são pretos
     const pintado = await page.locator('#game').evaluate((c) =>
     {
