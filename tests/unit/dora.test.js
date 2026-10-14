@@ -35,4 +35,24 @@ describe('métricas DORA', () =>
         const m = calcular({ agora, deploys: [], rollbacks: 0, alertas: [] });
         expect(m).toMatchObject({ deploys_producao: 0, frequencia_por_semana: 0, lead_time_horas: null, taxa_falha_percentual: null, tempo_recuperacao_minutos: null });
     });
+
+    it('usa o valor central quando há quantidade ímpar de deploys e alertas', () =>
+    {
+        const m = calcular({
+            agora,
+            deploys: [
+                { commit: '2026-10-14T00:00:00Z', fim: '2026-10-14T02:00:00Z', sucesso: true },
+                { commit: '2026-10-14T00:00:00Z', fim: '2026-10-14T06:00:00Z', sucesso: true },
+                { commit: '2026-10-14T00:00:00Z', fim: '2026-10-14T10:00:00Z', sucesso: true },
+            ],
+            rollbacks: 0,
+            alertas: [
+                { aberto: '2026-10-14T00:00:00Z', fechado: '2026-10-14T00:05:00Z' },
+                { aberto: '2026-10-14T00:00:00Z', fechado: '2026-10-14T00:10:00Z' },
+                { aberto: '2026-10-14T00:00:00Z', fechado: '2026-10-14T00:20:00Z' },
+            ],
+        });
+
+        expect(m).toMatchObject({ deploys_producao: 3, lead_time_horas: 6, taxa_falha_percentual: 0, tempo_recuperacao_minutos: 10 });
+    });
 });
