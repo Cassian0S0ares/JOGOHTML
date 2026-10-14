@@ -1,6 +1,6 @@
 {
   "name": "projeto-tuba",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Projeto Tuba: protótipo de jogo educativo entregue por uma esteira CI/CD (Desafio Arcade, DevOps 2º ADS)",
   "license": "MIT",
@@ -12,6 +12,7 @@
     "test:e2e": "playwright test",
     "build": "node scripts/build.mjs",
     "gdd:pdf": "node scripts/gdd-pdf.mjs",
+    "relatorio:pdf": "node scripts/gdd-pdf.mjs docs/relatorio.md docs/Relatorio.pdf \"Relatório técnico\"",
     "serve": "npx --yes serve dist"
   },
   "devDependencies": {
