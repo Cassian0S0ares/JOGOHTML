@@ -14,8 +14,10 @@ describe('sprites', () =>
 {
     it.each(Object.keys(GAME_DATA.sprites))('%s tem imagem e metadados válidos', (nome) =>
     {
+        const caminho = `assets/sprites/${nome}.png`;
         const s = GAME_DATA.sprites[nome];
-        expect(existsSync(`assets/sprites/${nome}.png`)).toBe(true);
+        expect(existsSync(caminho)).toBe(true);
+        expect(readFileSync(caminho).subarray(0, 8)).toEqual(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
         expect(s.w).toBeGreaterThan(0);
         expect(s.h).toBeGreaterThan(0);
         expect(s.n).toBeGreaterThan(0);
