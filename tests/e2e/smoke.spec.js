@@ -37,14 +37,14 @@ test('o jogo abre e mostra a versão', async ({ page }) =>
     await expect(page.locator('#versao')).toHaveText(/^v\d+\.\d+\.\d+ · [0-9a-f]{7}$/);
     if (process.env.EXPECTED_SHA) await expect(page.locator('#versao')).toContainText(process.env.EXPECTED_SHA);
 
-    // A sala foi desenhada: o canvas tem pixels que não são pretos
-    const pintado = await page.locator('#game').evaluate((c) =>
+    // A sala foi desenhada: o canvas tem pixels que não são pretos.
+    // Poll porque o primeiro quadro depois do menu só acerta o relógio e ainda não desenha
+    await expect.poll(() => page.locator('#game').evaluate((c) =>
     {
         const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
         for (let i = 0; i < d.length; i += 4 * 97) if (d[i] + d[i + 1] + d[i + 2] > 0) return true;
         return false;
-    });
-    expect(pintado).toBe(true);
+    })).toBe(true);
     expect(erros).toEqual([]);
 });
 
