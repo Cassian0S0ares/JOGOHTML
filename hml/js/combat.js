@@ -519,7 +519,9 @@ class Combat extends Instance
                 break;
 
             case CombatState.defeat:
-                room_restart();
+                // A tela de game over reinicia a sala quando o jogador continuar
+                instance_destroy(this);
+                end_screen_open('gameover');
                 break;
         }
     }

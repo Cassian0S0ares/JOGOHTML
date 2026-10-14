@@ -1,2 +1,2 @@
 'use strict';
-const GAME_VERSION = {"versao":"0.1.0","sha":"53a7494"};
+const GAME_VERSION = {"versao":"1.0.0","sha":"1e3d3f0"};
