@@ -89,6 +89,10 @@ jobs:
           git add status
           git commit -qm "monitor: sonda $(date -u +%FT%TZ)"
           for tentativa in 1 2 3; do
-            git push -q origin HEAD:observabilidade && break
-            git pull -q --rebase origin observabilidade
+            if git push -q origin HEAD:observabilidade; then
+              exit 0
+            fi
+            if [ "$tentativa" -lt 3 ]; then git pull -q --rebase origin observabilidade; fi
           done
+          echo "::error::não foi possível gravar as sondas após 3 tentativas" >&2
+          exit 1
