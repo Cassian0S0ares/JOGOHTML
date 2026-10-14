@@ -1,4 +1,4 @@
-Projeto Tuba v1.0.0 (1e3d3f0)
+Projeto Tuba v1.0.0 (96a498d)
 
 Como jogar offline:
   1. Descompacte o build.zip.
