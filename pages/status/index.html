@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Projeto Tuba · Status</title>
+    <style>
+        :root { --fundo: #0b0a12; --painel: #16141f; --borda: #3a3550; --texto: #d8d4e8; --fraco: #8a84a3; --ok: #3ddc84; --ruim: #ff5a5a; --aviso: #ffc94a; }
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 24px 16px; background: var(--fundo); color: var(--texto); font: 15px/1.5 ui-monospace, Consolas, monospace; }
+        main { max-width: 960px; margin: 0 auto; }
+        h1 { font-size: 22px; margin: 0 0 4px; }
+        h2 { font-size: 15px; color: var(--fraco); font-weight: normal; margin: 28px 0 10px; text-transform: uppercase; letter-spacing: .08em; }
+        .sub { color: var(--fraco); margin: 0; }
+        .grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+        .card { background: var(--painel); border: 1px solid var(--borda); border-radius: 8px; padding: 14px; }
+        .rotulo { color: var(--fraco); font-size: 13px; }
+        .valor { font-size: 24px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+        .det { color: var(--fraco); font-size: 13px; }
+        .ok { color: var(--ok); } .ruim { color: var(--ruim); } .aviso { color: var(--aviso); }
+        .tabela { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--borda); white-space: nowrap; }
+        th { color: var(--fraco); font-weight: normal; }
+        a { color: var(--texto); }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Projeto Tuba · Status</h1>
+    <p class="sub">Sondas a cada 15 min pelo workflow <code>monitor</code>. Nenhum dado do jogador é coletado. <span id="atualizado"></span></p>
+
+    <h2>Disponibilidade (últimas 24 h)</h2>
+    <div class="grade" id="ambientes"></div>
+
+    <h2>Entrega</h2>
+    <div class="grade" id="rollout"></div>
+
+    <h2>Métricas DORA</h2>
+    <div class="grade" id="dora"></div>
+
+    <h2>Últimas sondas</h2>
+    <div class="tabela"><table><thead><tr><th>Data (UTC)</th><th>Alvo</th><th>HTTP</th><th>Tempo</th><th>Versão</th></tr></thead><tbody id="sondas"></tbody></table></div>
+</main>
+<script>
+    // Dados do branch "observabilidade" (raw do GitHub) e o rollout.json deste mesmo Pages
+    const dono = location.hostname.split('.')[0];
+    const repo = location.pathname.split('/')[1];
+    const RAW = `https://raw.githubusercontent.com/${dono}/${repo}/observabilidade/status/`;
+    const LIMITE_LATENCIA = 2;
+
+    const el = (id) => document.getElementById(id);
+    const card = (rotulo, valor, det = '', classe = '') =>
+        `<div class="card"><div class="rotulo">${rotulo}</div><div class="valor ${classe}">${valor}</div><div class="det">${det}</div></div>`;
+    const buscar = (url, tipo) => fetch(url + '?t=' + Date.now(), { cache: 'no-store' }).then((r) => (r.ok ? r[tipo]() : Promise.reject(r.status)));
+
+    buscar(RAW + 'sondas.csv', 'text').then((csv) =>
+    {
+        const linhas = csv.trim().split('\n').slice(1).map((l) => { const [data, alvo, codigo, tempo, versao] = l.split(','); return { data, alvo, codigo, tempo: Number(tempo), versao }; });
+        const desde = Date.now() - 24 * 3600 * 1000;
+
+        el('ambientes').innerHTML = [['prd', 'Produção'], ['hml', 'Homologação']].map(([alvo, nome]) =>
+        {
+            const do_alvo = linhas.filter((l) => l.alvo === alvo);
+            const dia = do_alvo.filter((l) => Date.parse(l.data) >= desde);
+            const ultima = do_alvo[do_alvo.length - 1];
+            if (!ultima) return card(nome, '—', 'sem sondas ainda');
+            const disp = dia.length ? (100 * dia.filter((l) => l.codigo === '200').length / dia.length) : null;
+            const media = dia.length ? dia.reduce((s, l) => s + l.tempo, 0) / dia.length : null;
+            const no_ar = ultima.codigo === '200';
+            return card(nome, disp === null ? '—' : disp.toFixed(1) + '%',
+                `${no_ar ? '● no ar' : '● fora do ar (' + ultima.codigo + ')'} · última ${ultima.tempo.toFixed(2)} s · média ${media === null ? '—' : media.toFixed(2) + ' s'}<br>versão ${ultima.versao}`,
+                no_ar && ultima.tempo <= LIMITE_LATENCIA ? 'ok' : (no_ar ? 'aviso' : 'ruim'));
+        }).join('');
+
+        el('sondas').innerHTML = linhas.slice(-16).reverse().map((l) =>
+            `<tr><td>${l.data.replace('T', ' ').replace('Z', '')}</td><td>${l.alvo}</td><td class="${l.codigo === '200' ? 'ok' : 'ruim'}">${l.codigo}</td>` +
+            `<td class="${l.tempo > LIMITE_LATENCIA ? 'aviso' : ''}">${l.tempo.toFixed(2)} s</td><td>${l.versao}</td></tr>`).join('');
+        el('atualizado').textContent = 'Última sonda: ' + linhas[linhas.length - 1].data.replace('T', ' ').replace('Z', ' UTC') + '.';
+    }).catch(() => { el('ambientes').innerHTML = card('Sondas', '—', 'ainda não há dados no branch observabilidade'); });
+
+    buscar('../rollout.json', 'json').then((r) =>
+    {
+        el('rollout').innerHTML = card('Estável', r.estavel || '—', r.anterior ? 'anterior: ' + r.anterior : 'sem versão anterior') +
+            card('Canário', r.canario ? r.percentual + '%' : 'nenhum', r.canario ? 'versão ' + r.canario : 'todo o tráfego na estável');
+    }).catch(() => { el('rollout').innerHTML = card('Rollout', '—', 'rollout.json indisponível'); });
+
+    buscar(RAW + 'dora.json', 'json').then((d) =>
+    {
+        const n = (v, suf) => (v === null ? '—' : v + suf);
+        el('dora').innerHTML =
+            card('Frequência de deploy', n(d.frequencia_por_semana, '/sem'), d.deploys_producao + ' deploys em produção') +
+            card('Lead time de mudança', n(d.lead_time_horas, ' h'), 'linha de base Carparts: ' + d.lead_time_linha_de_base_horas / 24 + ' dias') +
+            card('Taxa de falha de mudança', n(d.taxa_falha_percentual, '%'), 'deploys com rollback') +
+            card('Tempo de recuperação', n(d.tempo_recuperacao_minutos, ' min'), d.alertas_fechados + ' alertas fechados');
+    }).catch(() => { el('dora').innerHTML = card('DORA', '—', 'ainda não calculado'); });
+</script>
+</body>
+</html>

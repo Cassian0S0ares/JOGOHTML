@@ -83,12 +83,32 @@ function frame(time)
 
 document.getElementById('versao').textContent = 'v' + GAME_VERSION.versao + ' · ' + GAME_VERSION.sha;
 
+/// Menu inicial (HTML por cima do canvas): o loop só começa quando o jogador aperta Jogar
+function menu_open()
+{
+    const menu = document.getElementById('menu');
+    const start = () =>
+    {
+        window.removeEventListener('keydown', on_key);
+        menu.remove();
+        input.queued.clear();   // o Enter que abriu o jogo não vale como ação no primeiro quadro
+        canvas.focus();
+        room_load(GAME_DATA.room_order[0]);
+        requestAnimationFrame(frame);
+    };
+    // O motor bloqueia o Enter (preventDefault), então o botão não recebe o clique pelo teclado
+    const on_key = (e) => { if (['Enter', 'NumpadEnter', 'Space', 'KeyE'].includes(e.code)) start(); };
+
+    menu.hidden = false;
+    document.getElementById('jogar').addEventListener('click', start);
+    window.addEventListener('keydown', on_key);
+}
+
 load_sprites()
     .then(() =>
     {
         document.getElementById('loading').remove();
-        room_load(GAME_DATA.room_order[0]);
-        requestAnimationFrame(frame);
+        menu_open();
     })
     .catch((error) =>
     {
