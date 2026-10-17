@@ -55,6 +55,7 @@ function terminal_solve(computer)
     if (!instance_exists(computer)) return;
     computer.solved = true;
     computer_remember_solved(computer);
+    progresso_salvar();
     sfx('protegido');
 }
 

@@ -90,6 +90,8 @@ A dificuldade sobe em três eixos: inimigos mais resistentes, minijogos que pede
 
 **Vitória e derrota.** Derrotar o chefe de um mundo faz sumir os inimigos que ainda estavam vivos. O chefe do mundo 1 abre um portal para o mundo 2; vencer o Cavalo de Troia leva à tela de fim de jogo. Se os PV do antivírus chegam a zero (ou a exaustão chega a 6), aparece a tela de game over e a sala reinicia (o portal e os computadores já protegidos do mundo 2 continuam como estavam).
 
+**Progresso salvo.** O jogo salva no próprio navegador (sem dados pessoais) ao chegar num mundo, ao proteger um computador do mundo 2, quando o Firewall entra no time e ao derrotar o DDoS. Fechar a aba e voltar retoma dali, como se a sala tivesse reiniciado; zerar o jogo apaga o progresso.
+
 ## 5. Enredo e personagens
 
 **Contexto.** Um sistema foi infectado. O Antivírus atravessa primeiro uma masmorra antiga, com placas e um campo de lápides, onde um DDoS está derrubando tudo, e depois um data center moderno, onde algo destruiu o laboratório do sudeste. Lá ele encontra o Firewall, um mago de fogo carismático que pede para entrar no time. As pistas de que há algo errado estão espalhadas: o Firewall fala de "turno da noite", de uma porta 4444 "fechada no turno dele", do ditado "cavalo dado não se olha os dentes", e os Vírus de Elite deixam bytes nos logs (0x54 0x52 0x4F 0x49 0x41 = "TROIA" em ASCII). Quando os três computadores do data center ficam protegidos, o Firewall agradece por ter ficado com a rede só para ele e revela ser o Cavalo de Troia.
@@ -158,7 +160,7 @@ Cada mundo é uma room de uma tela (1366 × 768) com salas ligadas por corredore
 - **Combate:** cenário, ficha de quem está agindo, menu de ações, dados animados e registro de combate com cada rolagem explicada (ex.: `Você: d20(14)+2 = 16`).
 - **Game over:** "Sistema comprometido", com uma dica de combate; Enter reinicia a sala.
 - **Fim de jogo:** depois da última aulinha do Cavalo de Troia, "Rede protegida" com a revisão do que o jogador aprendeu em cada ameaça; Enter recomeça do mundo 1.
-- **Menu inicial:** título, a premissa em uma linha, o botão Jogar (Enter, Espaço, E ou clique) e a lista de controles.
+- **Menu inicial:** título, a premissa em uma linha, o botão Jogar (Enter, Espaço, E ou clique) e a lista de controles. Com progresso salvo, aparecem **Continuar (mundo N)** (o Enter escolhe este) e **Novo jogo**.
 
 | | |
 |---|---|
@@ -217,7 +219,6 @@ Declaramos que o Squad detém os direitos de uso sobre todos os materiais listad
 
 - **Créditos** no menu inicial.
 - **Acessibilidade:** remapeamento de teclas, tamanho de fonte ajustável e modo de alto contraste.
-- **Salvar progresso** no próprio navegador (sem dados pessoais) para não recomeçar do mundo 1.
 - **Mundo 3:** ransomware e engenharia social por telefone, com minijogo de backup 3-2-1.
 - **Painel do professor:** contagem anônima e agregada de partidas e de minijogos concluídos, para medir o aprendizado sem identificar o jogador.
 - Telemetria só anônima, seguindo a LGPD.

@@ -91,6 +91,7 @@ function firewall_in_party()
 function firewall_join()
 {
     global.firewall_joined = true;
+    progresso_salvar();
 }
 
 /// Conversa com o Firewall na Room2: três perguntas, e a última o chama para o time.

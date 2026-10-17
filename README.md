@@ -76,7 +76,7 @@ tag vX.Y.Z ──▶ ci ──▶ release (GitHub Release com build.zip, checksu
 
 ## Dados pessoais (LGPD)
 
-O jogo não pede nem coleta nenhum dado pessoal. O navegador guarda apenas a versão sorteada pelo canário (`localStorage`, chave `versao`) para manter o jogador na mesma versão durante a sessão.
+O jogo não pede nem coleta nenhum dado pessoal. O navegador guarda só três chaves no `localStorage`: `versao` (a versão sorteada pelo canário, para o jogador continuar nela), `som` (ligado ou desligado) e `progresso` (a sala e o estado do jogo, para o botão Continuar).
 
 ## Estrutura
 

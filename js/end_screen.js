@@ -40,7 +40,11 @@ class EndScreen extends Instance
         if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space) || keyboard_check_pressed(ord('E')))
         {
             // Game over: a sala reinicia como antes. Zerou: começa tudo de novo do mundo 1.
-            if (this.kind === 'win') location.reload();
+            if (this.kind === 'win')
+            {
+                progresso_apagar();
+                location.reload();
+            }
             else room_restart();
         }
     }

@@ -202,3 +202,32 @@ test('a música do mapa toca e o M desliga o som', async ({ page }) =>
     await expect(page.locator('#som')).toHaveText('♪ desligado');
     expect(erros).toEqual([]);
 });
+
+test('o progresso fica salvo: recarregar e continuar volta para o mundo 2', async ({ page }) =>
+{
+    const erros = [];
+    page.on('pageerror', (e) => erros.push(e.message));
+
+    await abrir(page);
+    await page.evaluate(() =>
+    {
+        global.boss_ddos_defeated = true;
+        instance_create(Portal, 688, 560).enter();
+    });
+    await expect.poll(() => page.evaluate(() => game.room), { timeout: 5_000 }).toBe('Room2');
+
+    await page.reload();
+    await expect(page.locator('#continuar')).toHaveText('Continuar (mundo 2)', { timeout: 15_000 });
+    await expect(page.locator('#jogar')).toHaveText('Novo jogo');
+    await page.locator('#continuar').click();
+    await expect.poll(() => page.evaluate(() => game.room)).toBe('Room2');
+    expect(await page.evaluate(() => global.boss_ddos_defeated)).toBe(true);
+
+    // Novo jogo apaga o progresso e começa do mundo 1
+    await page.reload();
+    await page.locator('#jogar').click();
+    await expect.poll(() => page.evaluate(() => game.room)).toBe('Room1');
+    await page.reload();
+    await expect(page.locator('#continuar')).toBeHidden({ timeout: 15_000 });
+    expect(erros).toEqual([]);
+});
