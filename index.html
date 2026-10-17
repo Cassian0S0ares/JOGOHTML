@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Projeto Tuba</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23062006' width='100' height='100'/><path fill='%2300ff00' d='M30 20 L50 15 L70 20 L75 45 Q50 65 50 75 Q50 65 25 45 Z'/><path fill='%23000' d='M42 48 L48 55 L62 38' stroke='%2300ff00' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/></svg>">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,23 +12,58 @@
         <canvas id="game" width="1366" height="768" tabindex="0"></canvas>
         <div id="loading">Carregando...</div>
         <section id="menu" hidden>
+            <div class="elenco" aria-hidden="true">
+                <span class="sprite antivirus"></span>
+                <span class="sprite firewall"></span>
+                <span class="sprite virus"></span>
+            </div>
+            <p class="kicker">RPG de segurança digital</p>
             <h1>Projeto Tuba</h1>
-            <p>O sistema foi infectado. Você é o Antivírus.</p>
-            <button id="jogar" type="button">Jogar</button>
+            <p class="premissa">O sistema foi infectado. Você é o Antivírus.</p>
+            <div class="botoes">
+                <button id="continuar" type="button" hidden></button>
+                <button id="jogar" type="button">Jogar</button>
+            </div>
+            <fieldset id="dificuldade">
+                <legend>Dificuldade <span>(← →)</span></legend>
+                <label><input type="radio" name="dificuldade" value="facil"> Fácil</label>
+                <label><input type="radio" name="dificuldade" value="normal" checked> Normal</label>
+                <label><input type="radio" name="dificuldade" value="dificil"> Difícil</label>
+                <p id="dificuldade-texto"></p>
+            </fieldset>
             <dl>
                 <dt>WASD / Setas</dt><dd>andar</dd>
                 <dt>E</dt><dd>conversar, usar computadores e o portal</dd>
                 <dt>R</dt><dd>descanso longo na fogueira</dd>
                 <dt>Enter / Espaço</dt><dd>confirmar no combate e nos minijogos</dd>
+                <dt>M</dt><dd>liga e desliga o som</dd>
             </dl>
         </section>
         <div id="versao"></div>
+        <button id="som" type="button" title="Liga e desliga o som (tecla M)"></button>
+        <!-- Controles de toque: só aparecem em tela de toque (style.css) e seguram a tecla do data-tecla -->
+        <div id="toque">
+            <div class="dpad">
+                <button type="button" data-tecla="ArrowUp" aria-label="Cima">▲</button>
+                <button type="button" data-tecla="ArrowLeft" aria-label="Esquerda">◀</button>
+                <button type="button" data-tecla="ArrowRight" aria-label="Direita">▶</button>
+                <button type="button" data-tecla="ArrowDown" aria-label="Baixo">▼</button>
+            </div>
+            <div class="acoes">
+                <button type="button" data-tecla="KeyE" aria-label="Interagir">E</button>
+                <button type="button" data-tecla="Enter" aria-label="Confirmar">OK</button>
+                <button type="button" data-tecla="Escape" aria-label="Sair">Esc</button>
+                <button type="button" data-tecla="KeyR" aria-label="Descansar">R</button>
+            </div>
+        </div>
+        <p id="gire">Gire o celular para jogar na horizontal.</p>
     </main>
 
     <script src="js/version.js"></script>
     <script src="js/data.js"></script>
     <script src="js/engine.js"></script>
     <script src="js/runtime.js"></script>
+    <script src="js/sfx.js"></script>
     <script src="js/scr_dnd.js"></script>
     <script src="js/scr_ui.js"></script>
     <script src="js/scr_dice_view.js"></script>

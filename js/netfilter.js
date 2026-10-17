@@ -93,8 +93,10 @@ class Netfilter extends Terminal
         const passed = (allow === undefined) ? true : allow;
         this.decision = (allow === undefined) ? -1 : (allow ? 1 : 0);
 
-        if (allow !== undefined && passed === rules[this.matched_rule].allow) this.correct_count += 1;
+        const right = (allow !== undefined && passed === rules[this.matched_rule].allow);
+        if (right) this.correct_count += 1;
         else this.error_count += 1;
+        sfx(right ? 'certo' : 'errado');
 
         this.state = 'feedback';
         this.idle_timer = 0;

@@ -582,6 +582,7 @@ class BossDdos extends Instance
             {
                 // Onde o DDoS estava, abre o portal para o próximo mundo
                 global.boss_ddos_defeated = true;
+                progresso_salvar();
                 instance_create(Portal, this.x, this.y);
                 instance_destroy(this);
             }

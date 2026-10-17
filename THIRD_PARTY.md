@@ -18,6 +18,8 @@ Todo ativo que não foi criado pelo squad precisa estar aqui, com autor, link e 
 | `sprites/spr_font_ui.png` | Fonte bitmap | TODO | TODO | TODO |
 | `sounds/snd_dice_roll.ogg` | Efeito | TODO | TODO | TODO |
 
+A música e os demais efeitos sonoros são sintetizados pelo próprio código (`js/sfx.js`, Web Audio), autoria do squad.
+
 ## Regras do jogo
 
 | Obra | Autor | Link | Licença |

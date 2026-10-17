@@ -181,6 +181,7 @@ class Portal extends Instance
         if (this.entering) return;
         this.entering = true;
         this.enter_timer = 0;
+        sfx('portal');
     }
 
     step()

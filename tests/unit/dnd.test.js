@@ -85,3 +85,31 @@ describe('roll_mode_text', () =>
         expect(roll_mode_text(false, false, 'a', 'b')).toBe('');
     });
 });
+
+describe('dificuldade_aplicar', () =>
+{
+    const aplicar = (dificuldade, foe) =>
+    {
+        const { dificuldade_aplicar } = carregar(['js/scr_dnd.js'], ['dificuldade_aplicar'], { global: { dificuldade } });
+        dificuldade_aplicar(foe);
+        return foe;
+    };
+
+    it.each([
+        ['facil', 15, 1],
+        ['normal', 22, 3],
+        ['dificil', 29, 4],
+        [undefined, 22, 3],   // jogo salvo antes de existir dificuldade
+    ])('%s: vírus de 22 PV e +3 vira %i PV e %i', (dificuldade, pv, ataque) =>
+    {
+        expect(aplicar(dificuldade, { hp_max: 22, hp: 22, attack_bonus: 3 })).toMatchObject({ hp_max: pv, hp: pv, attack_bonus: ataque });
+    });
+
+    it('vale uma vez só: quem fugiu volta com a vida que sobrou', () =>
+    {
+        const foe = aplicar('facil', { hp_max: 22, hp: 10, attack_bonus: 3 });
+        const { dificuldade_aplicar } = carregar(['js/scr_dnd.js'], ['dificuldade_aplicar'], { global: { dificuldade: 'facil' } });
+        dificuldade_aplicar(foe);
+        expect(foe).toMatchObject({ hp_max: 15, hp: 7, attack_bonus: 1 });
+    });
+});

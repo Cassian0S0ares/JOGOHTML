@@ -4,6 +4,14 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/); 
 
 ## [Não lançado]
 
+### Adicionado
+- Menu novo: fundo de grade de rede, personagens animados, botões e seletor de dificuldade.
+- Telas de fim redesenhadas: vitória com retrato, ficha da partida (dificuldade, tempo, quedas) e lições aparecendo uma a uma; game over com falha de sinal e dica sorteada.
+- Controles de toque no celular: direcional e botões E, OK, Esc e R, só em tela de toque; aviso para girar o celular em pé.
+- Música (mapa, combate e chefe) e efeitos sonoros sintetizados no código com Web Audio, sem arquivos de terceiros; M ou o botão ♪ liga e desliga, e a escolha fica salva.
+- Dificuldade no menu (Fácil, Normal, Difícil): muda os PV e o bônus de ataque dos inimigos; fica lembrada e vai junto com o progresso.
+- Progresso salvo no navegador: Continuar no menu volta ao último ponto seguro (chegada num mundo, computador protegido no mundo 2, Firewall no time, DDoS derrotado); zerar apaga.
+
 ## [1.0.0] - 2026-10-10 · entrega
 
 ### Adicionado
