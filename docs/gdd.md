@@ -48,7 +48,7 @@ titulo: "Projeto Tuba · Game Design Document"
 ## 3. Gênero e plataforma
 
 - **Gênero:** RPG educacional top-down com combate tático por turnos baseado em dados (D&D 5e simplificado), minijogos de segurança e minijogos de *timing* e ritmo.
-- **Plataforma:** web desktop (navegador moderno, teclado e mouse). Roda também offline a partir do `build.zip`.
+- **Plataforma:** web, no navegador do computador (teclado e mouse) ou do celular deitado (controles de toque na tela: direcional, E, OK, Esc e R). Roda também offline a partir do `build.zip`.
 - **Tecnologia:** HTML5 Canvas e JavaScript puro, sem dependências em tempo de execução. O protótipo nasceu no GameMaker e foi portado para a web com um runtime próprio no estilo GameMaker (`js/runtime.js`). Site estático publicado no GitHub Pages por uma esteira CI/CD no GitHub Actions.
 
 ## 4. Mecânicas-core
@@ -89,6 +89,8 @@ A dificuldade sobe em três eixos: inimigos mais resistentes, minijogos que pede
 **Recompensas.** Não há pontuação numérica: a recompensa é a progressão (portas que abrem, o portal para o mundo 2, o descanso longo ao chegar num mundo novo) e o conhecimento, entregue nas aulinhas dos inimigos e na revisão final.
 
 **Vitória e derrota.** Derrotar o chefe de um mundo faz sumir os inimigos que ainda estavam vivos. O chefe do mundo 1 abre um portal para o mundo 2; vencer o Cavalo de Troia leva à tela de fim de jogo. Se os PV do antivírus chegam a zero (ou a exaustão chega a 6), aparece a tela de game over e a sala reinicia (o portal e os computadores já protegidos do mundo 2 continuam como estavam).
+
+**Progresso salvo.** O jogo salva no próprio navegador (sem dados pessoais) ao chegar num mundo, ao proteger um computador do mundo 2, quando o Firewall entra no time e ao derrotar o DDoS. Fechar a aba e voltar retoma dali, como se a sala tivesse reiniciado; zerar o jogo apaga o progresso.
 
 ## 5. Enredo e personagens
 
@@ -158,7 +160,7 @@ Cada mundo é uma room de uma tela (1366 × 768) com salas ligadas por corredore
 - **Combate:** cenário, ficha de quem está agindo, menu de ações, dados animados e registro de combate com cada rolagem explicada (ex.: `Você: d20(14)+2 = 16`).
 - **Game over:** "Sistema comprometido", com uma dica de combate; Enter reinicia a sala.
 - **Fim de jogo:** depois da última aulinha do Cavalo de Troia, "Rede protegida" com a revisão do que o jogador aprendeu em cada ameaça; Enter recomeça do mundo 1.
-- **Menu inicial:** título, a premissa em uma linha, o botão Jogar (Enter, Espaço, E ou clique) e a lista de controles.
+- **Menu inicial:** título, a premissa em uma linha, o botão Jogar (Enter, Espaço, E ou clique) e a lista de controles. Com progresso salvo, aparecem **Continuar (mundo N)** (o Enter escolhe este) e **Novo jogo**.
 
 | | |
 |---|---|
@@ -171,15 +173,21 @@ Cada mundo é uma room de uma tela (1366 × 768) com salas ligadas por corredore
 **Acessibilidade.**
 
 - Funciona em qualquer navegador moderno, sem instalação, sem cadastro e sem coletar nenhum dado pessoal.
-- Todo o conteúdo é texto na tela; o único som é o dos dados, então o jogo é jogável sem áudio.
+- Todo o conteúdo é texto na tela; o som (música e efeitos) só reforça o que já aparece escrito, então o jogo é jogável sem áudio. **M** ou o botão ♪ desliga o som, e a escolha fica salva no navegador.
 - Teclado ou mouse nos menus e minijogos (setas, números, Enter ou clique); textos com sombra e alto contraste sobre o fundo.
 - O combate é por turnos: não exige reflexo. O timing dá bônus, mas errar não impede de jogar.
 - Linguagem simples e com humor, sem jargão sem explicação; cada erro no minijogo vem com a explicação da resposta.
-- Limites conhecidos (ver seção 12): sem remapeamento de teclas, sem ajuste de tamanho de fonte e só desktop.
+- Limites conhecidos (ver seção 12): sem remapeamento de teclas, sem ajuste de tamanho de fonte; no celular, a tela é pequena para ler os minijogos com folga.
 
 ## 9. Áudio e música
 
-O protótipo tem apenas o efeito sonoro de rolagem de dados (`snd_dice_roll.ogg`), tocado a cada rolagem no combate. As músicas de mapa, combate e chefe foram removidas para não depender de material sem licença confirmada. Origem e licença de cada som estão em `THIRD_PARTY.md` (TODO: confirmar autor e licença do efeito de dados).
+Toda a música e os efeitos são **sintetizados no próprio código** (Web Audio, `js/sfx.js`), sem nenhum arquivo de áudio de terceiros:
+
+- **Músicas originais** em loop: mapa (arpejo calmo em lá menor), combate (baixo acelerado) e chefe (semitons em tom ameaçador). Silêncio nas telas de fim e quando o combate termina, para a vinheta aparecer.
+- **Efeitos:** resposta certa e errada nos minijogos, computador protegido, golpe acertado, dano recebido, ataque que erra, cura, poderes (Fúria, Esquiva), timing perfeito, portal, vitória e derrota.
+- **Dados:** o efeito de rolagem (`snd_dice_roll.ogg`), tocado a cada rolagem no combate (TODO: confirmar autor e licença em `THIRD_PARTY.md`).
+
+**M** ou o botão ♪ no canto da tela liga e desliga tudo.
 
 ## 10. Arte e referências visuais
 
@@ -210,9 +218,7 @@ Declaramos que o Squad detém os direitos de uso sobre todos os materiais listad
 ## 12. Ideias adicionais e próximos passos
 
 - **Créditos** no menu inicial.
-- **Versão mobile:** controles de toque (direcional virtual e botões) e layout que caiba em tela de celular.
 - **Acessibilidade:** remapeamento de teclas, tamanho de fonte ajustável e modo de alto contraste.
-- **Salvar progresso** no próprio navegador (sem dados pessoais) para não recomeçar do mundo 1.
 - **Mundo 3:** ransomware e engenharia social por telefone, com minijogo de backup 3-2-1.
 - **Painel do professor:** contagem anônima e agregada de partidas e de minijogos concluídos, para medir o aprendizado sem identificar o jogador.
 - Telemetria só anônima, seguindo a LGPD.

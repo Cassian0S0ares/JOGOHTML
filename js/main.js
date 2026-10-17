@@ -24,7 +24,20 @@ function game_step()
         const next = game.pending_room;
         game.pending_room = null;
         room_load(next);
+        progresso_salvar();
     }
+
+    musica_step(trilha_atual());
+}
+
+/// Mapa, combate ou chefe; silêncio nas telas de fim e no fim do combate (a vinheta toca sozinha)
+function trilha_atual()
+{
+    if (instance_exists('obj_end_screen')) return null;
+    const combate = instance_find(Combat);
+    if (combate === noone) return 'mapa';
+    if ([CombatState.victory, CombatState.defeat, CombatState.fled].includes(combate.state)) return null;
+    return (combate.is_boss || combate.is_trojan) ? 'chefe' : 'combate';
 }
 
 /// Maior profundidade primeiro; empate fica na ordem de criação
@@ -83,24 +96,69 @@ function frame(time)
 
 document.getElementById('versao').textContent = 'v' + GAME_VERSION.versao + ' · ' + GAME_VERSION.sha;
 
-/// Menu inicial (HTML por cima do canvas): o loop só começa quando o jogador aperta Jogar
+// ---------------------------------------------------------------- Progresso salvo no navegador
+// O mesmo que o game over usa para reiniciar a sala: a room e o global (ficha do antivírus,
+// computadores do mundo 2, Firewall, chefes). Salva só em pontos sem combate pela metade.
+
+const PROGRESSO = 'progresso';
+
+function progresso_salvar()
+{
+    // O modo paz é só para testes: não vai junto
+    try { localStorage.setItem(PROGRESSO, JSON.stringify({ room: game.room, global: { ...global, peace_mode: undefined } })); }
+    catch { /* sem storage: o jogo segue sem salvar */ }
+}
+
+function progresso_apagar()
+{
+    try { localStorage.removeItem(PROGRESSO); }
+    catch { /* nada salvo */ }
+}
+
+/// O progresso salvo, ou null se não houver nada além do começo do mundo 1
+function progresso_ler()
+{
+    try
+    {
+        const salvo = JSON.parse(localStorage.getItem(PROGRESSO));
+        if (!salvo || !GAME_DATA.rooms[salvo.room]) return null;
+        const comecou = (salvo.room !== GAME_DATA.room_order[0]) || salvo.global.boss_ddos_defeated === true;
+        return comecou ? salvo : null;
+    }
+    catch { return null; }
+}
+
+/// Menu inicial (HTML por cima do canvas): o loop só começa quando o jogador aperta Jogar ou Continuar
 function menu_open()
 {
     const menu = document.getElementById('menu');
-    const start = () =>
+    const salvo = progresso_ler();
+    const start = (progresso) =>
     {
         window.removeEventListener('keydown', on_key);
         menu.remove();
         input.queued.clear();   // o Enter que abriu o jogo não vale como ação no primeiro quadro
         canvas.focus();
-        room_load(GAME_DATA.room_order[0]);
+        if (progresso) Object.assign(global, progresso.global);
+        room_load(progresso ? progresso.room : GAME_DATA.room_order[0]);
+        progresso_salvar();
         requestAnimationFrame(frame);
     };
-    // O motor bloqueia o Enter (preventDefault), então o botão não recebe o clique pelo teclado
-    const on_key = (e) => { if (['Enter', 'NumpadEnter', 'Space', 'KeyE'].includes(e.code)) start(); };
+    // O motor bloqueia o Enter (preventDefault), então o botão não recebe o clique pelo teclado.
+    // Com progresso salvo, o teclado continua de onde parou.
+    const on_key = (e) => { if (['Enter', 'NumpadEnter', 'Space', 'KeyE'].includes(e.code)) start(salvo); };
 
     menu.hidden = false;
-    document.getElementById('jogar').addEventListener('click', start);
+    const jogar = document.getElementById('jogar');
+    jogar.addEventListener('click', () => start(null));
+    if (salvo)
+    {
+        const continuar = document.getElementById('continuar');
+        continuar.hidden = false;
+        continuar.textContent = 'Continuar (' + (salvo.room === 'Room2' ? 'mundo 2' : 'mundo 1') + ')';
+        continuar.addEventListener('click', () => start(salvo));
+        jogar.textContent = 'Novo jogo';
+    }
     window.addEventListener('keydown', on_key);
 }
 

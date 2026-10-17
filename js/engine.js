@@ -404,6 +404,20 @@ canvas.addEventListener('mousedown', (e) =>
 });
 canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
+// Controles de toque: cada botão segura a sua tecla enquanto o dedo está nele
+for (const btn of document.querySelectorAll('#toque [data-tecla]'))
+{
+    const code = btn.dataset.tecla;
+    btn.addEventListener('pointerdown', (e) =>
+    {
+        e.preventDefault();
+        audio_unlock();
+        input.down.add(code);
+        input.queued.add(code);
+    });
+    for (const fim of ['pointerup', 'pointercancel', 'pointerleave']) btn.addEventListener(fim, () => input.down.delete(code));
+}
+
 /// Chamado no início de cada step: o que foi apertado desde o step anterior vira "pressed"
 function input_begin_step()
 {
@@ -445,6 +459,7 @@ function audio_play_sound(name, loop, gain = 1, pitch = 1)
 {
     const el = new Audio('assets/sounds/' + name + '.ogg');
     el.loop = loop;
+    el.muted = som.mudo;
     el.volume = clamp(gain * (SOUND_VOLUME[name] ?? 1), 0, 1);
     if (pitch !== 1)
     {

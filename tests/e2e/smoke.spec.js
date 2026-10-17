@@ -1,4 +1,4 @@
-/* global game, instance_exists, instance_create, instance_number, instance_find, room_goto, Combat, Portal, TrojanBoss */
+/* global game, som, instance_exists, instance_create, instance_number, instance_find, room_goto, Combat, Portal, TrojanBoss */
 import { expect, test } from '@playwright/test';
 
 /// Abre o jogo e passa pelo menu inicial
@@ -150,5 +150,84 @@ test('vencer o Cavalo de Troia mostra a tela de fim de jogo', async ({ page }) =
         return page.evaluate(() => instance_exists('obj_end_screen'));
     }, { timeout: 25_000, intervals: [100] }).toBe(true);
     expect(await page.evaluate(() => instance_find('obj_end_screen').kind)).toBe('win');
+    expect(erros).toEqual([]);
+});
+
+test.describe('celular deitado', () =>
+{
+    test.use({ viewport: { width: 844, height: 390 }, hasTouch: true, isMobile: true });
+
+    test('os controles de toque aparecem e o direcional anda', async ({ page }) =>
+    {
+        const erros = [];
+        page.on('pageerror', (e) => erros.push(e.message));
+
+        await page.goto('./');
+        await expect(page.locator('#loading')).toHaveCount(0, { timeout: 15_000 });
+        await page.locator('#jogar').tap();
+        await expect(page.locator('#menu')).toHaveCount(0);
+        await expect(page.locator('#toque .dpad')).toBeVisible();
+
+        const baixo = page.locator('#toque [data-tecla="ArrowDown"]');
+        const antes = await page.evaluate(() => game.player.y);
+        await baixo.dispatchEvent('pointerdown');
+        await page.waitForTimeout(500);
+        await baixo.dispatchEvent('pointerup');
+        expect(await page.evaluate(() => game.player.y)).toBeGreaterThan(antes);
+        expect(erros).toEqual([]);
+    });
+});
+
+test('no desktop os controles de toque ficam escondidos', async ({ page }) =>
+{
+    await abrir(page);
+    await expect(page.locator('#toque .dpad')).toBeHidden();
+});
+
+test('a música do mapa toca e o M desliga o som', async ({ page }) =>
+{
+    const erros = [];
+    page.on('pageerror', (e) => erros.push(e.message));
+
+    await abrir(page);
+    await page.locator('#game').click();
+    await expect.poll(() => page.evaluate(() => som.trilha)).toBe('mapa');
+    await expect(page.locator('#som')).toHaveText('♪ ligado');
+
+    await page.keyboard.press('m');
+    await expect(page.locator('#som')).toHaveText('♪ desligado');
+    expect(await page.evaluate(() => som.mestre.gain.value)).toBe(0);
+
+    await page.reload();
+    await expect(page.locator('#som')).toHaveText('♪ desligado');
+    expect(erros).toEqual([]);
+});
+
+test('o progresso fica salvo: recarregar e continuar volta para o mundo 2', async ({ page }) =>
+{
+    const erros = [];
+    page.on('pageerror', (e) => erros.push(e.message));
+
+    await abrir(page);
+    await page.evaluate(() =>
+    {
+        global.boss_ddos_defeated = true;
+        instance_create(Portal, 688, 560).enter();
+    });
+    await expect.poll(() => page.evaluate(() => game.room), { timeout: 5_000 }).toBe('Room2');
+
+    await page.reload();
+    await expect(page.locator('#continuar')).toHaveText('Continuar (mundo 2)', { timeout: 15_000 });
+    await expect(page.locator('#jogar')).toHaveText('Novo jogo');
+    await page.locator('#continuar').click();
+    await expect.poll(() => page.evaluate(() => game.room)).toBe('Room2');
+    expect(await page.evaluate(() => global.boss_ddos_defeated)).toBe(true);
+
+    // Novo jogo apaga o progresso e começa do mundo 1
+    await page.reload();
+    await page.locator('#jogar').click();
+    await expect.poll(() => page.evaluate(() => game.room)).toBe('Room1');
+    await page.reload();
+    await expect(page.locator('#continuar')).toBeHidden({ timeout: 15_000 });
     expect(erros).toEqual([]);
 });

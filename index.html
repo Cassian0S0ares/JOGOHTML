@@ -13,21 +13,41 @@
         <section id="menu" hidden>
             <h1>Projeto Tuba</h1>
             <p>O sistema foi infectado. Você é o Antivírus.</p>
+            <button id="continuar" type="button" hidden></button>
             <button id="jogar" type="button">Jogar</button>
             <dl>
                 <dt>WASD / Setas</dt><dd>andar</dd>
                 <dt>E</dt><dd>conversar, usar computadores e o portal</dd>
                 <dt>R</dt><dd>descanso longo na fogueira</dd>
                 <dt>Enter / Espaço</dt><dd>confirmar no combate e nos minijogos</dd>
+                <dt>M</dt><dd>liga e desliga o som</dd>
             </dl>
         </section>
         <div id="versao"></div>
+        <button id="som" type="button" title="Liga e desliga o som (tecla M)"></button>
+        <!-- Controles de toque: só aparecem em tela de toque (style.css) e seguram a tecla do data-tecla -->
+        <div id="toque">
+            <div class="dpad">
+                <button type="button" data-tecla="ArrowUp" aria-label="Cima">▲</button>
+                <button type="button" data-tecla="ArrowLeft" aria-label="Esquerda">◀</button>
+                <button type="button" data-tecla="ArrowRight" aria-label="Direita">▶</button>
+                <button type="button" data-tecla="ArrowDown" aria-label="Baixo">▼</button>
+            </div>
+            <div class="acoes">
+                <button type="button" data-tecla="KeyE" aria-label="Interagir">E</button>
+                <button type="button" data-tecla="Enter" aria-label="Confirmar">OK</button>
+                <button type="button" data-tecla="Escape" aria-label="Sair">Esc</button>
+                <button type="button" data-tecla="KeyR" aria-label="Descansar">R</button>
+            </div>
+        </div>
+        <p id="gire">Gire o celular para jogar na horizontal.</p>
     </main>
 
     <script src="js/version.js"></script>
     <script src="js/data.js"></script>
     <script src="js/engine.js"></script>
     <script src="js/runtime.js"></script>
+    <script src="js/sfx.js"></script>
     <script src="js/scr_dnd.js"></script>
     <script src="js/scr_ui.js"></script>
     <script src="js/scr_dice_view.js"></script>

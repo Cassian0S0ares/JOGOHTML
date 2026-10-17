@@ -104,7 +104,9 @@ class Quiz extends Terminal
     confirm_option(option)
     {
         this.chosen = option;
-        if (this.chosen === this.current_question().answer) this.correct_count += 1;
+        const right = (this.chosen === this.current_question().answer);
+        if (right) this.correct_count += 1;
+        sfx(right ? 'certo' : 'errado');
         this.state = 'feedback';
         this.idle_timer = 0;
     }
@@ -127,7 +129,11 @@ class Quiz extends Terminal
         if (instance_exists(this.computer))
         {
             this.computer.best_score = Math.max(this.computer.best_score, this.correct_count);
-            if (this.correct_count >= this.questions.length) this.computer.solved = true;
+            if (this.correct_count >= this.questions.length)
+            {
+                this.computer.solved = true;
+                sfx('protegido');
+            }
         }
 
         // Último computador protegido: o chefe desperta quando o quiz fechar

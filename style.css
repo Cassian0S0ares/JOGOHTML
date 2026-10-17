@@ -40,6 +40,19 @@ body {
     pointer-events: none;
 }
 
+/* Liga e desliga o som, no canto de cima */
+#som {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    padding: 2px 8px;
+    border: 1px solid rgba(192, 192, 192, 0.5);
+    background: rgba(0, 0, 0, 0.5);
+    color: #c0c0c0;
+    font: 12px monospace;
+    cursor: pointer;
+}
+
 /* Menu inicial, por cima do canvas ainda preto */
 #menu {
     position: absolute;
@@ -64,6 +77,7 @@ body {
 
 #menu p { margin: 0 0 16px; color: #fff; }
 
+#continuar,
 #jogar {
     padding: 12px 48px;
     border: 2px solid #00ff00;
@@ -73,8 +87,12 @@ body {
     cursor: pointer;
 }
 
+#continuar:hover,
+#continuar:focus-visible,
 #jogar:hover,
 #jogar:focus-visible { background: #00ff00; color: #000; outline: none; }
+
+#continuar[hidden] { display: none; }
 
 #menu dl {
     display: grid;
@@ -86,3 +104,75 @@ body {
 
 #menu dt { color: #ffff00; text-align: right; }
 #menu dd { margin: 0; }
+
+/* Controles de toque: direcional à esquerda, ações à direita, só em tela de toque */
+#toque,
+#gire { display: none; }
+
+@media (pointer: coarse) {
+    html, body { touch-action: manipulation; }
+
+    #toque {
+        display: block;
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+
+    #menu dl { display: none; }
+
+    #versao { top: 34px; bottom: auto; }
+}
+
+#toque .dpad,
+#toque .acoes {
+    position: absolute;
+    bottom: 12px;
+    display: grid;
+    gap: 6px;
+    pointer-events: auto;
+}
+
+#toque .dpad {
+    left: 12px;
+    grid-template-columns: repeat(3, 52px);
+    grid-template-areas: ". up ." "left . right" ". down .";
+}
+
+#toque .acoes {
+    right: 12px;
+    grid-template-columns: repeat(2, 52px);
+}
+
+#toque [data-tecla="ArrowUp"] { grid-area: up; }
+#toque [data-tecla="ArrowLeft"] { grid-area: left; }
+#toque [data-tecla="ArrowRight"] { grid-area: right; }
+#toque [data-tecla="ArrowDown"] { grid-area: down; }
+
+#toque button {
+    width: 52px;
+    height: 52px;
+    border: 2px solid rgba(0, 255, 0, 0.6);
+    border-radius: 50%;
+    background: rgba(0, 32, 0, 0.5);
+    color: #00ff00;
+    font: 16px monospace;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+#toque button:active { background: rgba(0, 255, 0, 0.5); color: #000; }
+
+/* Celular em pé: a sala 16:9 fica minúscula */
+@media (pointer: coarse) and (orientation: portrait) {
+    #gire {
+        display: block;
+        position: absolute;
+        top: 12px;
+        margin: 0 16px;
+        color: #ffff00;
+        font: 16px monospace;
+        text-align: center;
+    }
+}
