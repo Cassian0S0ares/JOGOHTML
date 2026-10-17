@@ -48,7 +48,7 @@ titulo: "Projeto Tuba · Game Design Document"
 ## 3. Gênero e plataforma
 
 - **Gênero:** RPG educacional top-down com combate tático por turnos baseado em dados (D&D 5e simplificado), minijogos de segurança e minijogos de *timing* e ritmo.
-- **Plataforma:** web desktop (navegador moderno, teclado e mouse). Roda também offline a partir do `build.zip`.
+- **Plataforma:** web, no navegador do computador (teclado e mouse) ou do celular deitado (controles de toque na tela: direcional, E, OK, Esc e R). Roda também offline a partir do `build.zip`.
 - **Tecnologia:** HTML5 Canvas e JavaScript puro, sem dependências em tempo de execução. O protótipo nasceu no GameMaker e foi portado para a web com um runtime próprio no estilo GameMaker (`js/runtime.js`). Site estático publicado no GitHub Pages por uma esteira CI/CD no GitHub Actions.
 
 ## 4. Mecânicas-core
@@ -175,7 +175,7 @@ Cada mundo é uma room de uma tela (1366 × 768) com salas ligadas por corredore
 - Teclado ou mouse nos menus e minijogos (setas, números, Enter ou clique); textos com sombra e alto contraste sobre o fundo.
 - O combate é por turnos: não exige reflexo. O timing dá bônus, mas errar não impede de jogar.
 - Linguagem simples e com humor, sem jargão sem explicação; cada erro no minijogo vem com a explicação da resposta.
-- Limites conhecidos (ver seção 12): sem remapeamento de teclas, sem ajuste de tamanho de fonte e só desktop.
+- Limites conhecidos (ver seção 12): sem remapeamento de teclas, sem ajuste de tamanho de fonte; no celular, a tela é pequena para ler os minijogos com folga.
 
 ## 9. Áudio e música
 
@@ -210,7 +210,6 @@ Declaramos que o Squad detém os direitos de uso sobre todos os materiais listad
 ## 12. Ideias adicionais e próximos passos
 
 - **Créditos** no menu inicial.
-- **Versão mobile:** controles de toque (direcional virtual e botões) e layout que caiba em tela de celular.
 - **Acessibilidade:** remapeamento de teclas, tamanho de fonte ajustável e modo de alto contraste.
 - **Salvar progresso** no próprio navegador (sem dados pessoais) para não recomeçar do mundo 1.
 - **Mundo 3:** ransomware e engenharia social por telefone, com minijogo de backup 3-2-1.

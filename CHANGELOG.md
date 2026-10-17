@@ -4,6 +4,9 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/); 
 
 ## [Não lançado]
 
+### Adicionado
+- Controles de toque no celular: direcional e botões E, OK, Esc e R, só em tela de toque; aviso para girar o celular em pé.
+
 ## [1.0.0] - 2026-10-10 · entrega
 
 ### Adicionado

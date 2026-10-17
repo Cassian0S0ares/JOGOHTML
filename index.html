@@ -22,6 +22,22 @@
             </dl>
         </section>
         <div id="versao"></div>
+        <!-- Controles de toque: só aparecem em tela de toque (style.css) e seguram a tecla do data-tecla -->
+        <div id="toque">
+            <div class="dpad">
+                <button type="button" data-tecla="ArrowUp" aria-label="Cima">▲</button>
+                <button type="button" data-tecla="ArrowLeft" aria-label="Esquerda">◀</button>
+                <button type="button" data-tecla="ArrowRight" aria-label="Direita">▶</button>
+                <button type="button" data-tecla="ArrowDown" aria-label="Baixo">▼</button>
+            </div>
+            <div class="acoes">
+                <button type="button" data-tecla="KeyE" aria-label="Interagir">E</button>
+                <button type="button" data-tecla="Enter" aria-label="Confirmar">OK</button>
+                <button type="button" data-tecla="Escape" aria-label="Sair">Esc</button>
+                <button type="button" data-tecla="KeyR" aria-label="Descansar">R</button>
+            </div>
+        </div>
+        <p id="gire">Gire o celular para jogar na horizontal.</p>
     </main>
 
     <script src="js/version.js"></script>

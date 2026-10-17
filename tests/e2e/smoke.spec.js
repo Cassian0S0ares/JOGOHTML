@@ -152,3 +152,34 @@ test('vencer o Cavalo de Troia mostra a tela de fim de jogo', async ({ page }) =
     expect(await page.evaluate(() => instance_find('obj_end_screen').kind)).toBe('win');
     expect(erros).toEqual([]);
 });
+
+test.describe('celular deitado', () =>
+{
+    test.use({ viewport: { width: 844, height: 390 }, hasTouch: true, isMobile: true });
+
+    test('os controles de toque aparecem e o direcional anda', async ({ page }) =>
+    {
+        const erros = [];
+        page.on('pageerror', (e) => erros.push(e.message));
+
+        await page.goto('./');
+        await expect(page.locator('#loading')).toHaveCount(0, { timeout: 15_000 });
+        await page.locator('#jogar').tap();
+        await expect(page.locator('#menu')).toHaveCount(0);
+        await expect(page.locator('#toque .dpad')).toBeVisible();
+
+        const baixo = page.locator('#toque [data-tecla="ArrowDown"]');
+        const antes = await page.evaluate(() => game.player.y);
+        await baixo.dispatchEvent('pointerdown');
+        await page.waitForTimeout(500);
+        await baixo.dispatchEvent('pointerup');
+        expect(await page.evaluate(() => game.player.y)).toBeGreaterThan(antes);
+        expect(erros).toEqual([]);
+    });
+});
+
+test('no desktop os controles de toque ficam escondidos', async ({ page }) =>
+{
+    await abrir(page);
+    await expect(page.locator('#toque .dpad')).toBeHidden();
+});
