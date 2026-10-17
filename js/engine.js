@@ -459,6 +459,7 @@ function audio_play_sound(name, loop, gain = 1, pitch = 1)
 {
     const el = new Audio('assets/sounds/' + name + '.ogg');
     el.loop = loop;
+    el.muted = som.mudo;
     el.volume = clamp(gain * (SOUND_VOLUME[name] ?? 1), 0, 1);
     if (pitch !== 1)
     {

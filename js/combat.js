@@ -193,6 +193,7 @@ class Combat extends Instance
 
                 case 'popup':
                     this.add_popup(event.on_hero, event.text, event.colour, undefined, event.on_ally);
+                    sfx(event.text.startsWith('Errou') ? 'erro' : 'poder');
                     break;
 
                 case 'lunge':
@@ -202,6 +203,7 @@ class Combat extends Instance
                     break;
 
                 case 'damage':
+                    sfx((event.on_ally || event.on_hero) ? 'dano' : 'golpe');
                     if (event.on_ally) this.damage_ally(event.amount);
                     else if (event.on_hero) this.damage_hero(event.amount);
                     else this.damage_foe(event.amount, event.piece);
@@ -212,6 +214,7 @@ class Combat extends Instance
                     const member = event.member;
                     member.hp = Math.min(member.get_hp_max(), member.hp + event.amount);
                     this.add_popup(member === this.hero, '+' + event.amount, c_lime, undefined, member === this.ally);
+                    sfx('cura');
                     break;
                 }
             }
@@ -232,6 +235,7 @@ class Combat extends Instance
     resolve_timing(event)
     {
         const texts = timing_result_text(event);
+        if (event.result === TimingResult.perfect) sfx('perfeito');
         this.queue_log('Timing: ' + texts[0] + ' (' + texts[1] + ')', (event.result === TimingResult.miss) ? c_ltgray : DICE_COLOUR_TIMING);
 
         switch (event.kind)
@@ -456,6 +460,7 @@ class Combat extends Instance
 
         this.state = result;
         this.wait_timer = 30;
+        if (result !== CombatState.fled) sfx((result === CombatState.victory) ? 'vitoria' : 'derrota');
 
         switch (result)
         {

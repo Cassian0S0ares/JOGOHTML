@@ -1,4 +1,4 @@
-/* global game, instance_exists, instance_create, instance_number, instance_find, room_goto, Combat, Portal, TrojanBoss */
+/* global game, som, instance_exists, instance_create, instance_number, instance_find, room_goto, Combat, Portal, TrojanBoss */
 import { expect, test } from '@playwright/test';
 
 /// Abre o jogo e passa pelo menu inicial
@@ -182,4 +182,23 @@ test('no desktop os controles de toque ficam escondidos', async ({ page }) =>
 {
     await abrir(page);
     await expect(page.locator('#toque .dpad')).toBeHidden();
+});
+
+test('a música do mapa toca e o M desliga o som', async ({ page }) =>
+{
+    const erros = [];
+    page.on('pageerror', (e) => erros.push(e.message));
+
+    await abrir(page);
+    await page.locator('#game').click();
+    await expect.poll(() => page.evaluate(() => som.trilha)).toBe('mapa');
+    await expect(page.locator('#som')).toHaveText('♪ ligado');
+
+    await page.keyboard.press('m');
+    await expect(page.locator('#som')).toHaveText('♪ desligado');
+    expect(await page.evaluate(() => som.mestre.gain.value)).toBe(0);
+
+    await page.reload();
+    await expect(page.locator('#som')).toHaveText('♪ desligado');
+    expect(erros).toEqual([]);
 });

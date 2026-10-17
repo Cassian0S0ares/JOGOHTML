@@ -6,6 +6,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/); 
 
 ### Adicionado
 - Controles de toque no celular: direcional e botões E, OK, Esc e R, só em tela de toque; aviso para girar o celular em pé.
+- Música (mapa, combate e chefe) e efeitos sonoros sintetizados no código com Web Audio, sem arquivos de terceiros; M ou o botão ♪ liga e desliga, e a escolha fica salva.
 
 ## [1.0.0] - 2026-10-10 · entrega
 

@@ -171,7 +171,7 @@ Cada mundo é uma room de uma tela (1366 × 768) com salas ligadas por corredore
 **Acessibilidade.**
 
 - Funciona em qualquer navegador moderno, sem instalação, sem cadastro e sem coletar nenhum dado pessoal.
-- Todo o conteúdo é texto na tela; o único som é o dos dados, então o jogo é jogável sem áudio.
+- Todo o conteúdo é texto na tela; o som (música e efeitos) só reforça o que já aparece escrito, então o jogo é jogável sem áudio. **M** ou o botão ♪ desliga o som, e a escolha fica salva no navegador.
 - Teclado ou mouse nos menus e minijogos (setas, números, Enter ou clique); textos com sombra e alto contraste sobre o fundo.
 - O combate é por turnos: não exige reflexo. O timing dá bônus, mas errar não impede de jogar.
 - Linguagem simples e com humor, sem jargão sem explicação; cada erro no minijogo vem com a explicação da resposta.
@@ -179,7 +179,13 @@ Cada mundo é uma room de uma tela (1366 × 768) com salas ligadas por corredore
 
 ## 9. Áudio e música
 
-O protótipo tem apenas o efeito sonoro de rolagem de dados (`snd_dice_roll.ogg`), tocado a cada rolagem no combate. As músicas de mapa, combate e chefe foram removidas para não depender de material sem licença confirmada. Origem e licença de cada som estão em `THIRD_PARTY.md` (TODO: confirmar autor e licença do efeito de dados).
+Toda a música e os efeitos são **sintetizados no próprio código** (Web Audio, `js/sfx.js`), sem nenhum arquivo de áudio de terceiros:
+
+- **Músicas originais** em loop: mapa (arpejo calmo em lá menor), combate (baixo acelerado) e chefe (semitons em tom ameaçador). Silêncio nas telas de fim e quando o combate termina, para a vinheta aparecer.
+- **Efeitos:** resposta certa e errada nos minijogos, computador protegido, golpe acertado, dano recebido, ataque que erra, cura, poderes (Fúria, Esquiva), timing perfeito, portal, vitória e derrota.
+- **Dados:** o efeito de rolagem (`snd_dice_roll.ogg`), tocado a cada rolagem no combate (TODO: confirmar autor e licença em `THIRD_PARTY.md`).
+
+**M** ou o botão ♪ no canto da tela liga e desliga tudo.
 
 ## 10. Arte e referências visuais
 

@@ -25,6 +25,18 @@ function game_step()
         game.pending_room = null;
         room_load(next);
     }
+
+    musica_step(trilha_atual());
+}
+
+/// Mapa, combate ou chefe; silêncio nas telas de fim e no fim do combate (a vinheta toca sozinha)
+function trilha_atual()
+{
+    if (instance_exists('obj_end_screen')) return null;
+    const combate = instance_find(Combat);
+    if (combate === noone) return 'mapa';
+    if ([CombatState.victory, CombatState.defeat, CombatState.fled].includes(combate.state)) return null;
+    return (combate.is_boss || combate.is_trojan) ? 'chefe' : 'combate';
 }
 
 /// Maior profundidade primeiro; empate fica na ordem de criação

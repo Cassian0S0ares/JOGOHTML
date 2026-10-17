@@ -68,6 +68,7 @@ class Inbox extends Terminal
         const email = this.current_email();
         this.decision = quarantine ? 1 : 0;
         if (quarantine === email.phishing) this.correct_count += 1;
+        sfx((quarantine === email.phishing) ? 'certo' : 'errado');
 
         for (const clue of email.clues)
         {

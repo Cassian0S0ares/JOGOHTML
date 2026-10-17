@@ -40,6 +40,19 @@ body {
     pointer-events: none;
 }
 
+/* Liga e desliga o som, no canto de cima */
+#som {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    padding: 2px 8px;
+    border: 1px solid rgba(192, 192, 192, 0.5);
+    background: rgba(0, 0, 0, 0.5);
+    color: #c0c0c0;
+    font: 12px monospace;
+    cursor: pointer;
+}
+
 /* Menu inicial, por cima do canvas ainda preto */
 #menu {
     position: absolute;
@@ -103,7 +116,7 @@ body {
 
     #menu dl { display: none; }
 
-    #versao { top: 6px; bottom: auto; }
+    #versao { top: 34px; bottom: auto; }
 }
 
 #toque .dpad,

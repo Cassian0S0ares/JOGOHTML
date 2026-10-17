@@ -28,7 +28,7 @@ Sem build, abrir o `index.html` da raiz também funciona (a versão aparece como
 | `npm run build` | `dist/` + `dist/version.json` (SemVer, SHA, data) |
 | `npm run gdd:pdf` | `docs/gdd.md` → `docs/GDD.pdf` |
 
-Controles: WASD/Setas para andar, **E** para interagir, **R** para descanso longo, **7** liga o modo paz (testes).
+Controles: WASD/Setas para andar, **E** para interagir, **R** para descanso longo, **M** liga e desliga o som, **7** liga o modo paz (testes).
 No celular (deitado), aparecem na tela um direcional e os botões E, OK (Enter), Esc e R.
 
 ## Estratégia de branching

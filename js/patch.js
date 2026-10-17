@@ -86,6 +86,7 @@ class Patch extends Terminal
         {
             this.state = 'result';
             this.won = false;
+            sfx('errado');
         }
         else if (!patch_can_spread(this.network))
         {

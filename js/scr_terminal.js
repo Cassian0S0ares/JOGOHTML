@@ -55,6 +55,7 @@ function terminal_solve(computer)
     if (!instance_exists(computer)) return;
     computer.solved = true;
     computer_remember_solved(computer);
+    sfx('protegido');
 }
 
 /// Painel centralizado na GUI: { x1, y1, x2, y2, padding, line_height, text_x, text_width, body_y }.
