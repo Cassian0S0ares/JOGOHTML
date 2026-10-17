@@ -231,3 +231,31 @@ test('o progresso fica salvo: recarregar e continuar volta para o mundo 2', asyn
     await expect(page.locator('#continuar')).toBeHidden({ timeout: 15_000 });
     expect(erros).toEqual([]);
 });
+
+test('a dificuldade do menu vale nos combates e fica lembrada', async ({ page }) =>
+{
+    const erros = [];
+    page.on('pageerror', (e) => erros.push(e.message));
+
+    await page.goto('./');
+    await expect(page.locator('#menu')).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator('#dificuldade input:checked')).toHaveValue('normal');
+    await page.keyboard.press('ArrowLeft');
+    await expect(page.locator('#dificuldade input:checked')).toHaveValue('facil');
+    await expect(page.locator('#dificuldade-texto')).toContainText('30% menos PV');
+    await page.keyboard.press('Enter');
+    await expect.poll(() => page.evaluate(() => game.room)).toBe('Room1');
+
+    // O vírus comum (22 PV, +3) entra no combate com 15 PV e +1 no Fácil
+    const foe = await page.evaluate(() =>
+    {
+        const slime = instance_find('obj_slime');
+        instance_create(Combat, 0, 0, { hero: game.player, foe: slime });
+        return { hp: slime.hp_max, ataque: slime.attack_bonus };
+    });
+    expect(foe).toEqual({ hp: 15, ataque: 1 });
+
+    await page.reload();
+    await expect(page.locator('#dificuldade input:checked')).toHaveValue('facil', { timeout: 15_000 });
+    expect(erros).toEqual([]);
+});

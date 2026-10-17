@@ -90,6 +90,8 @@ A dificuldade sobe em três eixos: inimigos mais resistentes, minijogos que pede
 
 **Vitória e derrota.** Derrotar o chefe de um mundo faz sumir os inimigos que ainda estavam vivos. O chefe do mundo 1 abre um portal para o mundo 2; vencer o Cavalo de Troia leva à tela de fim de jogo. Se os PV do antivírus chegam a zero (ou a exaustão chega a 6), aparece a tela de game over e a sala reinicia (o portal e os computadores já protegidos do mundo 2 continuam como estavam).
 
+**Dificuldade.** Escolhida no menu e guardada com o progresso. **Fácil:** vírus e chefes com 30% menos PV e −2 no ataque, para quem quer focar nos minijogos e nas aulinhas. **Normal:** o balanceamento original. **Difícil:** 30% mais PV e +1 no ataque. Os minijogos de segurança são iguais em todas: a dificuldade mexe só no combate, nunca no conteúdo ensinado.
+
 **Progresso salvo.** O jogo salva no próprio navegador (sem dados pessoais) ao chegar num mundo, ao proteger um computador do mundo 2, quando o Firewall entra no time e ao derrotar o DDoS. Fechar a aba e voltar retoma dali, como se a sala tivesse reiniciado; zerar o jogo apaga o progresso.
 
 ## 5. Enredo e personagens
@@ -158,9 +160,9 @@ Cada mundo é uma room de uma tela (1366 × 768) com salas ligadas por corredore
 - **Falas:** caixa com retrato, máquina de escrever e escolhas (conversa com o Firewall).
 - **Terminal de segurança:** tela de cada minijogo de computador, com placar e explicação de cada resposta.
 - **Combate:** cenário, ficha de quem está agindo, menu de ações, dados animados e registro de combate com cada rolagem explicada (ex.: `Você: d20(14)+2 = 16`).
-- **Game over:** "Sistema comprometido", com uma dica de combate; Enter reinicia a sala.
-- **Fim de jogo:** depois da última aulinha do Cavalo de Troia, "Rede protegida" com a revisão do que o jogador aprendeu em cada ameaça; Enter recomeça do mundo 1.
-- **Menu inicial:** título, a premissa em uma linha, o botão Jogar (Enter, Espaço, E ou clique) e a lista de controles. Com progresso salvo, aparecem **Continuar (mundo N)** (o Enter escolhe este) e **Novo jogo**.
+- **Game over:** "Sistema comprometido" com efeito de falha de sinal, uma dica de combate sorteada entre seis, o número de quedas e a dificuldade; depois de 3 quedas fora do Fácil, sugere o modo Fácil. Enter reinicia a sala.
+- **Fim de jogo:** depois da última aulinha do Cavalo de Troia, "Rede protegida" sobre uma chuva de bits, com o retrato do Antivírus, a ficha da partida (dificuldade, tempo e quedas) e as seis lições, uma por ameaça, aparecendo uma a uma. Enter recomeça do mundo 1.
+- **Menu inicial:** fundo de grade de rede com varredura de monitor, o Antivírus, o Firewall e um vírus animados, título, a premissa em uma linha, o botão Jogar (Enter, Espaço, E ou clique), a escolha de **dificuldade** (← → ou clique) e a lista de controles. Com progresso salvo, aparecem **Continuar (mundo N)** (o Enter escolhe este) e **Novo jogo**.
 
 | | |
 |---|---|

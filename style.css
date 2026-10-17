@@ -53,57 +53,187 @@ body {
     cursor: pointer;
 }
 
-/* Menu inicial, por cima do canvas ainda preto */
+/* Menu inicial: tela cheia por cima do canvas ainda preto, com grade de "rede" e varredura de monitor */
 #menu {
+    --verde: #00ff00;
+    --verde-escuro: #003300;
+    --amarelo: #ffff00;
+    --texto: #c0c0c0;
     position: absolute;
+    inset: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
-    color: #c0c0c0;
+    justify-content: center;
+    gap: 14px;
+    padding: 16px;
+    overflow: hidden;
+    color: var(--texto);
     font: 16px monospace;
     text-align: center;
+    background:
+        repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.25) 0 2px, transparent 2px 4px),
+        linear-gradient(rgba(0, 255, 0, 0.07) 1px, transparent 1px) 0 0 / 48px 48px,
+        linear-gradient(90deg, rgba(0, 255, 0, 0.07) 1px, transparent 1px) 0 0 / 48px 48px,
+        radial-gradient(ellipse at center, #062006 0%, #000 70%);
 }
 
 #menu[hidden] { display: none; }
 
-#menu h1 {
-    margin: 0;
-    color: #00ff00;
-    font-size: clamp(32px, 7vw, 72px);
-    letter-spacing: 4px;
-    text-shadow: 4px 4px 0 #004000;
+/* Varredura descendo a tela, como num monitor de tubo */
+#menu::after {
+    content: "";
+    position: absolute;
+    inset: -20% 0 auto;
+    height: 20%;
+    background: linear-gradient(transparent, rgba(0, 255, 0, 0.06), transparent);
+    animation: varredura 6s linear infinite;
+    pointer-events: none;
 }
 
-#menu p { margin: 0 0 16px; color: #fff; }
+@keyframes varredura { to { transform: translateY(700%); } }
+
+/* Elenco: sprites do jogo animados pela folha (4 quadros lado a lado), 3x maiores */
+.elenco {
+    display: flex;
+    align-items: flex-end;
+    gap: 40px;
+}
+
+.sprite {
+    display: block;
+    width: 96px;
+    height: 144px;
+    background-size: 400% 100%;
+    image-rendering: pixelated;
+    animation: andar 0.6s steps(4) infinite;
+}
+
+.sprite.antivirus { background-image: url("assets/sprites/spr_senatir_down.png"); }
+.sprite.firewall { background-image: url("assets/sprites/spr_firewall_down.png"); }
+.sprite.virus {
+    height: 96px;
+    background-image: url("assets/sprites/spr_virus_down.png");
+    animation-duration: 0.45s;
+}
+
+/* 4 quadros: 0%, 33%, 66% e 100% da folha */
+@keyframes andar { to { background-position-x: 133.333%; } }
+
+.kicker {
+    margin: 0;
+    color: var(--amarelo);
+    font-size: 14px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+}
+
+#menu h1 {
+    margin: 0;
+    color: var(--verde);
+    font-size: clamp(36px, 7vw, 80px);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    text-shadow: 4px 4px 0 #004000, 0 0 24px rgba(0, 255, 0, 0.45);
+}
+
+.premissa { margin: 0; color: #fff; }
+
+.botoes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 8px;
+}
 
 #continuar,
 #jogar {
-    padding: 12px 48px;
-    border: 2px solid #00ff00;
-    background: #002000;
-    color: #00ff00;
-    font: 24px monospace;
+    min-width: 220px;
+    padding: 12px 32px;
+    border: 2px solid var(--verde);
+    background: var(--verde-escuro);
+    color: var(--verde);
+    font: 22px monospace;
     cursor: pointer;
+    box-shadow: 4px 4px 0 #001a00;
 }
+
+#continuar { background: var(--verde); color: #000; }
+#continuar ~ #jogar { font-size: 18px; }
 
 #continuar:hover,
 #continuar:focus-visible,
 #jogar:hover,
-#jogar:focus-visible { background: #00ff00; color: #000; outline: none; }
+#jogar:focus-visible {
+    background: var(--amarelo);
+    border-color: var(--amarelo);
+    color: #000;
+    outline: none;
+}
 
 #continuar[hidden] { display: none; }
+
+/* Dificuldade: três opções lado a lado, a marcada acesa */
+#dificuldade {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    max-width: 520px;
+    margin: 0;
+    padding: 10px 16px 6px;
+    border: 1px solid rgba(0, 255, 0, 0.35);
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#dificuldade legend { padding: 0 8px; color: var(--amarelo); }
+#dificuldade legend span { color: var(--texto); font-size: 12px; }
+
+#dificuldade label {
+    padding: 6px 14px;
+    border: 1px solid rgba(0, 255, 0, 0.35);
+    cursor: pointer;
+}
+
+#dificuldade input {
+    position: absolute;
+    opacity: 0;
+}
+
+#dificuldade label:has(:checked) { background: var(--verde); color: #000; }
+#dificuldade label:has(:focus-visible) { outline: 2px solid var(--amarelo); }
+
+#dificuldade-texto {
+    flex-basis: 100%;
+    min-height: 2.6em;
+    margin: 4px 0 0;
+    font-size: 13px;
+}
 
 #menu dl {
     display: grid;
     grid-template-columns: auto auto;
     gap: 6px 16px;
-    margin: 24px 0 0;
+    margin: 4px 0 0;
     text-align: left;
+    font-size: 14px;
 }
 
-#menu dt { color: #ffff00; text-align: right; }
+#menu dt { color: var(--amarelo); text-align: right; }
 #menu dd { margin: 0; }
+
+/* Tela baixa (notebook pequeno, celular deitado): sem elenco e sem lista de teclas */
+@media (max-height: 760px) {
+    .sprite { width: 64px; height: 96px; }
+    .sprite.virus { height: 64px; }
+}
+
+@media (max-height: 620px) {
+    #menu { gap: 8px; }
+    .elenco, #menu dl { display: none; }
+    #continuar, #jogar { min-width: 0; padding: 8px 24px; font-size: 18px; }
+}
 
 /* Controles de toque: direcional à esquerda, ações à direita, só em tela de toque */
 #toque,
@@ -119,7 +249,8 @@ body {
         pointer-events: none;
     }
 
-    #menu dl { display: none; }
+    #menu dl,
+    #dificuldade legend span { display: none; }
 
     #versao { top: 34px; bottom: auto; }
 }

@@ -61,3 +61,24 @@ function roll_mode_text(advantage, disadvantage, advantage_reason, disadvantage_
     if (disadvantage) return 'DESVANTAGEM: ' + disadvantage_reason;
     return '';
 }
+
+// ---------------------------------------------------------------- Dificuldade (escolhida no menu, guardada em global.dificuldade)
+
+const DIFICULDADES = Object.freeze({
+    facil: { nome: 'Fácil', pv: 0.7, ataque: -2, texto: 'Vírus com 30% menos PV e que erram mais. Para focar no aprendizado.' },
+    normal: { nome: 'Normal', pv: 1, ataque: 0, texto: 'O jogo como foi pensado: cada luta pede estratégia.' },
+    dificil: { nome: 'Difícil', pv: 1.3, ataque: 1, texto: 'Vírus com 30% mais PV e mais certeiros. Para quem já zerou.' },
+});
+
+const dificuldade_atual = () => DIFICULDADES[global.dificuldade] ?? DIFICULDADES.normal;
+
+/// Ajusta PV e bônus de ataque do inimigo uma vez só (quem fugiu volta com a vida que sobrou)
+function dificuldade_aplicar(foe)
+{
+    if (foe.dificuldade_aplicada) return;
+    foe.dificuldade_aplicada = true;
+    const d = dificuldade_atual();
+    foe.hp_max = Math.max(1, Math.round(foe.hp_max * d.pv));
+    foe.hp = Math.max(1, Math.min(foe.hp_max, Math.round(foe.hp * d.pv)));
+    foe.attack_bonus += d.ataque;
+}

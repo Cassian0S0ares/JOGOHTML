@@ -4,6 +4,7 @@
 function game_step()
 {
     input_begin_step();
+    global.passos = (global.passos ?? 0) + 1;   // tempo de jogo, mostrado na tela de fim
 
     // Instâncias criadas durante este step só rodam a partir do próximo
     for (const inst of game.instances.slice())
@@ -133,6 +134,20 @@ function menu_open()
 {
     const menu = document.getElementById('menu');
     const salvo = progresso_ler();
+    const opcoes = [...document.querySelectorAll('#dificuldade input')];
+    const escolhida = () => opcoes.find((o) => o.checked).value;
+    const mostrar_dificuldade = () =>
+    {
+        document.getElementById('dificuldade-texto').textContent = DIFICULDADES[escolhida()].texto
+            + (salvo ? ' Vale para um novo jogo; Continuar mantém a do jogo salvo.' : '');
+    };
+
+    // A última dificuldade escolhida volta marcada
+    try { opcoes.find((o) => o.value === localStorage.getItem('dificuldade'))?.click(); }
+    catch { /* sem storage: fica Normal */ }
+    for (const o of opcoes) o.addEventListener('change', mostrar_dificuldade);
+    mostrar_dificuldade();
+
     const start = (progresso) =>
     {
         window.removeEventListener('keydown', on_key);
@@ -140,13 +155,28 @@ function menu_open()
         input.queued.clear();   // o Enter que abriu o jogo não vale como ação no primeiro quadro
         canvas.focus();
         if (progresso) Object.assign(global, progresso.global);
+        else
+        {
+            global.dificuldade = escolhida();
+            try { localStorage.setItem('dificuldade', global.dificuldade); }
+            catch { /* sem storage: só não lembra na próxima vez */ }
+        }
         room_load(progresso ? progresso.room : GAME_DATA.room_order[0]);
         progresso_salvar();
         requestAnimationFrame(frame);
     };
-    // O motor bloqueia o Enter (preventDefault), então o botão não recebe o clique pelo teclado.
-    // Com progresso salvo, o teclado continua de onde parou.
-    const on_key = (e) => { if (['Enter', 'NumpadEnter', 'Space', 'KeyE'].includes(e.code)) start(salvo); };
+    // O motor bloqueia o Enter e as setas (preventDefault), então o menu trata o teclado aqui.
+    // Com progresso salvo, o Enter continua de onde parou.
+    const on_key = (e) =>
+    {
+        if (['Enter', 'NumpadEnter', 'Space', 'KeyE'].includes(e.code)) start(salvo);
+        const passo = { ArrowLeft: -1, KeyA: -1, ArrowRight: 1, KeyD: 1 }[e.code];
+        if (passo)
+        {
+            const i = opcoes.findIndex((o) => o.checked);
+            opcoes[clamp(i + passo, 0, opcoes.length - 1)].click();
+        }
+    };
 
     menu.hidden = false;
     const jogar = document.getElementById('jogar');

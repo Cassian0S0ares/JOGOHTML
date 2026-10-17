@@ -12,6 +12,7 @@ class Combat extends Instance
         const hero = this.hero;
         const foe = this.foe;
         this.depth = -10000;
+        dificuldade_aplicar(foe);   // antes do DDoS virar enxame, que usa os PV dele
 
         this.state = CombatState.intro;
         this.wait_timer = 10;
@@ -525,6 +526,7 @@ class Combat extends Instance
 
             case CombatState.defeat:
                 // A tela de game over reinicia a sala quando o jogador continuar
+                global.derrotas = (global.derrotas ?? 0) + 1;
                 instance_destroy(this);
                 end_screen_open('gameover');
                 break;
