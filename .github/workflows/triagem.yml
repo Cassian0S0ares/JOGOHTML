@@ -1,0 +1,59 @@
+name: triagem
+
+# Reproduz a triagem técnica do concurso contra a produção e gera o pacote de submissão (INT-09).
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 12 * * *"                  # todo dia, 09h de Brasília; avisa se algo quebrar antes do prazo
+
+permissions:
+  contents: read
+
+jobs:
+  triagem:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      issues: write                       # abre Issue "alerta" se a triagem reprovar
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Dependências, Playwright, poppler e ffmpeg
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          sudo apt-get install -y -qq poppler-utils ffmpeg
+
+      - name: Build, GDD.pdf e build.zip
+        run: |
+          npm run build
+          npm run gdd:pdf
+          (cd dist && zip -qrX ../build.zip .)
+
+      - name: Triagem
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: ./scripts/triagem.sh
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: submissao-${{ github.sha }}
+          path: submissao/
+
+      - name: Alerta TriagemReprovada
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create alerta --color D93F0B --force -R "$GITHUB_REPOSITORY" >/dev/null
+          aberta=$(gh issue list -R "$GITHUB_REPOSITORY" --label alerta --state open --search "TriagemReprovada in:title" --json number -q '.[0].number')
+          [ -n "$aberta" ] || gh issue create -R "$GITHUB_REPOSITORY" --label alerta \
+            --title "TriagemReprovada" \
+            --body "A triagem reprovou em $(date -u +%FT%TZ): $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
