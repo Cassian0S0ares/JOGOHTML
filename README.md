@@ -6,6 +6,7 @@ Protótipo de jogo educativo (RPG de combate por turnos sobre segurança digital
 - **Homologação:** <https://cassian0s0ares.github.io/JOGOHTML/hml/>
 - **GDD:** [`docs/gdd.md`](docs/gdd.md) (o `GDD.pdf` sai em cada execução da pipeline e em cada Release)
 - **Squad:** [`SQUAD.md`](SQUAD.md)
+- **Vídeo de inscrição:** roteiro em [`docs/roteiro-video.md`](docs/roteiro-video.md)
 
 ## Como rodar
 
